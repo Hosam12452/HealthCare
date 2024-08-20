@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Registration</title>
+    <style>
+        body {
+            background: linear-gradient(90deg, rgb(127, 120, 120) 0%, rgb(153, 186, 136) 50%);
+            font-family: "Roboto", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .login-page {
+            width: 360px;
+            padding: 8% 0 0;
+            margin: auto;
+        }
+
+        .form {
+            position: relative;
+            z-index: 1;
+            background: #FFFFFF;
+            max-width: 360px;
+            margin: 0 auto 100px;
+            padding: 45px;
+            text-align: center;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+        }
+
+        .form input {
+            font-family: "Roboto", sans-serif;
+            outline: 0;
+            background: #f2f2f2;
+            width: 100%;
+            border: 0;
+            margin: 0 0 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .form button {
+            font-family: "Roboto", sans-serif;
+            text-transform: uppercase;
+            outline: 0;
+            background: #4CAF50;
+            width: 100%;
+            border: 0;
+            padding: 15px;
+            color: #FFFFFF;
+            font-size: 14px;
+            -webkit-transition: all 0.3 ease;
+            transition: all 0.3 ease;
+            cursor: pointer;
+        }
+
+        .form button:hover,
+        .form button:active,
+        .form button:focus {
+            background: #43A047;
+        }
+
+        .form .message {
+            margin: 15px 0 0;
+            color: #b3b3b3;
+            font-size: 12px;
+        }
+
+        .form .message a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .form .register-form {
+            display: none;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 14px;
+            justify-content: flex-start;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkbox-group label {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-group label::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            background: #ffffff;
+            border: 2px solid #050505;
+            border-radius: 4px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .checkbox-group label::after {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 3px;
+            width: 6px;
+            height: 12px;
+            border: solid #0b0a0a;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .checkbox-group input[type="checkbox"]:checked + label::after {
+            opacity: 1;
+        }
+
+        .forgot-password-remember {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .forgot-password {
+            margin: 0;
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .rememberme {
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        #fofo {
+            float: left;
+            margin-right: 20px;
+        }
+
+        #fofo img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        {% load static %}
+        <div class="form">
+            <!-- Display error message if login fails -->
+            {% if error_message %}
+                <div class="error-message">{{ error_message }}</div>
+            {% endif %}
+
+            <form action="login" method="POST" class="login-form">
+                {% csrf_token %}
+                <img id="fofo" src="{% static 'photo/ik.png' %}" alt="gust" width="20" height="20">
+                <input type="email" name="email" placeholder="Email" id="login-username" required />
+                <img id="fofo" src="{% static 'photo/ik2.png' %}" alt="gust" width="20" height="20">
+                <input type="password" name="password" placeholder="Password" id="login-password" required />
+                <div class="forgot-password-remember">
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="remember-me" />
+                        <label class="rememberme" for="remember-me">Remember me</label>
+                    </div>
+                </div>
+                <button type="submit">Login</button>
+                <p class="message">Not registered? <a href="register">Create an account</a></p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock content %}

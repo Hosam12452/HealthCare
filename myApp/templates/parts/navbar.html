@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Center Management</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(90deg, rgb(127, 120, 120) 0%, rgb(153, 186, 136) 50%);
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            width: 100%;
+            background: linear-gradient(90deg, rgb(127, 120, 120) 0%, rgb(153, 186, 136) 50%);
+            padding: 10px 0;
+            color: #ffffff;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            margin: 0 auto;
+        }
+        .navbar {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .logo {
+            height: 50px;
+        }
+        .web_name {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: #e5e7eb;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+        .user_pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .navbar a {
+            text-decoration: none;
+            font-size: 1rem;
+            color: #a9d4b2;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+        .navbar a:hover {
+            background-color: #56a67c;
+            color: white;
+            border-radius: 5px;
+        }
+        .logout {
+            font-weight: bold;
+            color: #dc3545;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .web_name {
+                font-size: 1.5rem;
+            }
+            .user-info {
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+        hr {
+        border: 0;
+        height: 2px; 
+        background-color: green; 
+        margin: 20px auto;
+    }
+    </style>
+</head>
+<body>
+    {% load static %}
+    <header class="header">
+        <div class="container">
+            <ul class="navbar">
+                <li>
+                    <a href="about" class="about">About Us</a>
+                </li>
+                <li>
+                    <img src="{% static 'photo/logo.jpeg' %}" alt="Logo" class="logo" >
+                </li>
+                <li>
+                    <h3 class="web_name">Medical Center Management</h3>
+                </li>
+            </ul>
+            <div class="user-info">
+                <img src="{% static 'photo/logo.jpeg' %}" alt="User Picture" class="user_pic">
+                <h5>Welcome, {{ username }}</h5>
+            </div>
+        </div>
+        <hr>
+    </header>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

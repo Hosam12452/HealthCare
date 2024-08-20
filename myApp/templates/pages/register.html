@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link type="text/css" rel="stylesheet"
+        href="https://cdn02.jotfor.ms/themes/CSS/5e6b428acc8c4e222d1beb91.css?v=3.3.56052&themeRevisionID=5eb3b4ae85bd2e1e2966db96" />
+    <style>
+        body {
+            background-color: rgb(29, 55, 46);
+        }
+
+        .form-all {
+            background-color: #fefefe;
+            border: 1px solid #d1d1d1;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            color: black;
+        }
+
+        .form-label {
+            color: black;
+        }
+
+        .form-textbox {
+            border: 1px solid black;
+            border-radius: 4px;
+            padding: 8px;
+        }
+
+        .form-submit-button {
+            background-color: green;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .form-submit-button:hover {
+            background-color: black;
+        }
+
+        .form-sub-label {
+            color: black;
+        }
+
+        .form-required {
+            color: black;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+         
+    <form class="jotform-form" action="register" method="POST" name="form_242265224338454" id="242265224338454"
+        accept-charset="utf-8" autocomplete="on">
+        {% csrf_token %}
+        <input type="hidden" name="formID" value="242265224338454" />
+        <div role="main" class="form-all">
+            {% if messages %}
+            <div class="error-message">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <ul class="form-section page-section">
+                <li id="cid_1" class="form-input-wide" data-type="control_head">
+                    <div class="form-header-group header-large">
+                        <div class="header-text httal htvam">
+                            <h1 id="header_1" class="form-header" data-component="header"> Registration Form</h1>
+                        </div>
+                    </div>
+                </li>
+                <li class="form-line jf-required" data-type="control_fullname" id="id_3">
+                    <label class="form-label form-label-top form-label-auto" id="label_3" for="first_3"> Full Name<span
+                            class="form-required">*</span> </label>
+                    <div id="cid_3" class="form-input-wide jf-required" data-layout="full">
+                        <div data-wrapper-react="true">
+                            <span class="form-sub-label-container" style="vertical-align:top" data-input-type="first">
+                                <input type="text" id="first_3" name="first_name" class="form-textbox validate[required]"
+                                    autoComplete="given-name" size="10" required="" value="{{ request.POST.first_name }}" />
+                                <label class="form-sub-label" for="first_3" id="sublabel_3_first">First Name</label>
+                            </span>
+                            <span class="form-sub-label-container" style="vertical-align:top" data-input-type="last">
+                                <input type="text" id="last_3" name="last_name" class="form-textbox validate[required]"
+                                    autoComplete="family-name" size="15" required="" value="{{ request.POST.last_name }}" />
+                                <label class="form-sub-label" for="last_3" id="sublabel_3_last">Last Name</label>
+                            </span>
+                        </div>
+                    </div>
+                </li>
+                <li class="form-line jf-required" data-type="control_phone" id="id_5">
+                    <label class="form-label form-label-top form-label-auto" id="label_5" for="input_5_full"> Phone
+                        Number<span class="form-required">*</span> </label>
+                    <div id="cid_5" class="form-input-wide jf-required" data-layout="half">
+                        <span class="form-sub-label-container" style="vertical-align:top">
+                            <input type="tel" id="input_5_full" name="phone" class="form-textbox validate[required]"
+                                placeholder="(000) 000-0000" required="" value="{{ request.POST.phone }}" />
+                        </span>
+                    </div>
+                </li>
+                <li class="form-line form-line-column form-col-1 jf-required" data-type="control_email" id="id_6">
+                    <label class="form-label form-label-top form-label-auto" id="label_6" for="input_6"> E-mail<span
+                            class="form-required">*</span> </label>
+                    <div id="cid_6" class="form-input-wide jf-required" data-layout="half">
+                        <span class="form-sub-label-container" style="vertical-align:top">
+                            <input type="email" id="input_6" name="email" class="form-textbox validate[Email,Required]"
+                                placeholder="example@example.com" required="" value="{{ request.POST.email }}" />
+                            <label class="form-sub-label" for="input_6"
+                                id="sublabel_input_6">example@example.com</label>
+                        </span>
+                    </div>
+                </li>
+                <li class="form-line jf-required" data-type="control_text" id="id_7">
+                    <label class="form-label form-label-top form-label-auto" id="label_7" for="input_7"> ID<span
+                            class="form-required">*</span> </label>
+                    <div id="cid_7" class="form-input-wide jf-required" data-layout="full">
+                        <span class="form-sub-label-container" style="vertical-align:top">
+                            <input type="text" id="input_7" name="id" class="form-textbox validate[required]"
+                                required="" value="{{ request.POST.id }}" />
+                        </span>
+                    </div>
+                </li>
+                <li class="form-line jf-required" data-type="control_password" id="id_8">
+                    <label class="form-label form-label-top form-label-auto" id="label_8" for="input_8"> Password<span
+                            class="form-required">*</span> </label>
+                    <div id="cid_8" class="form-input-wide jf-required" data-layout="full">
+                        <span class="form-sub-label-container" style="vertical-align:top">
+                            <input type="password" id="input_8" name="password" class="form-textbox validate[required]"
+                                required="" value="{{ request.POST.password }}" />
+                        </span>
+                    </div>
+                </li>
+                <li class="form-line jf-required" data-type="control_password" id="id_9">
+                    <label class="form-label form-label-top form-label-auto" id="label_9" for="input_9"> Confirm
+                        Password<span class="form-required">*</span> </label>
+                    <div id="cid_9" class="form-input-wide jf-required" data-layout="full">
+                        <span class="form-sub-label-container" style="vertical-align:top">
+                            <input type="password" id="input_9" name="password_confirmation"
+                                class="form-textbox validate[required]" required="" value="{{ request.POST.password_confirmation }}" />
+                        </span>
+                    </div>
+                </li>
+                <li class="form-line" data-type="control_button" id="id_25">
+                    <div id="cid_25" class="form-input-wide" data-layout="full">
+                        <div data-align="auto" class="form-buttons-wrapper form-buttons-auto">
+                            <button id="input_25" type="submit" class="form-submit-button submit-button">Submit</button>
+                            <br>
+                            <br>
+                        </div>
+                    </div>
+                </li>
+                <li class="form-line" data-type="control_text" id="id_26">
+                    <div id="cid_26" class="form-input-wide" data-layout="full">
+                        <p style="text-align: center;">
+                            <a href="login" style="color: #2116f4;">Do you have an account?</a>
+                        </p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </form>
+</body>
+
+</html>
+{% endblock content %}

@@ -1,0 +1,149 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Patient Information</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h3 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .btn-update {
+            background-color: #256e2d;
+            color: #ffffff;
+        }
+
+        .btn-update:hover {
+            background-color: #1e5623;
+        }
+
+        .btn-import {
+            background-color: #dc3545;
+            color: #ffffff;
+        }
+
+        .btn-import:hover {
+            background-color: #c82333;
+        }
+
+        .or-text {
+            margin: 0 1rem;
+            font-size: 1rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="form-container">
+            <h3>Edit Patient Information</h3>
+            {% if messages %}
+                <div class="alert alert-success">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id">ID</label>
+                    <input type="text" class="form-control" name="id" id="id" placeholder="Enter ID" value="{{ patient.id }}" readonly required>
+                </div>
+                <div class="form-group">
+                    <label for="fullname">Full Name</label>
+                    <input type="text" class="form-control" name="full_name" id="fullname" placeholder="Enter full name" value="{{ patient.full_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Enter email" value="{{ patient.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" name="address" id="address" placeholder="Enter address" value="{{ patient.address }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" class="form-control" name="phone" id="phone" placeholder="Enter phone number" value="{{ patient.phone }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="urgency_level">Urgency Level</label>
+                    <select class="form-control" name="urgency_level" required>
+                        
+                        <option value="Low" {% if patient.urgency_level == 'Low' %}selected{% endif %}>Low</option>
+                        <option value="Medium" {% if patient.urgency_level == 'Medium' %}selected{% endif %}>Medium</option>
+                        <option value="High" {% if patient.urgency_level == 'High' %}selected{% endif %}>High</option>
+                        <option value="Ultra" {% if patient.urgency_level == 'Ultra' %}selected{% endif %}>Ultra</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="age">Age</label>
+                        <input type="number" class="form-control" name="age" id="age" placeholder="Enter age" value="{{ patient.age }}" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="gender">Gender</label>
+                        <select class="form-control" name="gender" id="gender" required>
+                            <option value="">Gender</option>
+                            <option value="Male" {% if patient.gender == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if patient.gender == 'Female' %}selected{% endif %}>Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="action">Action</label>
+                        <select class="form-control" name="action" required>
+                            <option value="Update Medical Records" {% if patient.action == 'Update Medical Records' %}selected{% endif %}>Update Medical Records</option>
+                            <option value="Order Diagnostic Tests" {% if patient.action == 'Order Diagnostic Tests' %}selected{% endif %}>Order Diagnostic Tests</option>
+                            <option value="Refer to Specialist" {% if patient.action == 'Refer to Specialist' %}selected{% endif %}>Refer to Specialist</option>
+                            <option value="Discharge Patient" {% if patient.action == 'Discharge Patient' %}selected{% endif %}>Discharge Patient</option>
+                            <option value="Provide Health Education" {% if patient.action == 'Provide Health Education' %}selected{% endif %}>Provide Health Education</option>
+                            <option value="Perform a Procedure" {% if patient.action == 'Perform a Procedure' %}selected{% endif %}>Perform a Procedure</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" name="waiting_time_days" value="{{ patient.waiting_time_days }}">
+
+                <div class="d-flex justify-content-center align-items-center">
+                    <button type="submit" class="btn btn-update">Update</button>
+                    <input type="hidden" name="waiting_time_days" value="0">
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+{% endblock content %}
