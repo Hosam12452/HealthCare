@@ -25,6 +25,10 @@ from django.shortcuts import render, redirect
 from .models import Patient
 
 
+def editPat(request):
+    return render(request,'pages/editPat.html')
+ 
+
 def calculate_score(gender, age, urgency_level, waiting_time_days):
 
     gender_score = 20 if gender.lower() == 'female' else 15
