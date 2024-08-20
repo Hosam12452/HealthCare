@@ -1,7 +1,5 @@
 from django.urls import path
 from . import views
-from .views import import_patients
-
 
 urlpatterns=[
     path ('index',views.index,name='index'),
@@ -10,8 +8,9 @@ urlpatterns=[
     path('register' ,views.register,name='register'),
     path('dash' ,views.dash,name='dash'),
     path('about' ,views.about,name='about'),
+    path('editPat' ,views.editPat,name='editPat'),
     path('addPat' ,views.addPat,name='addPat'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
-    path('import/', import_patients, name='import_patients'),
+
 
 ]

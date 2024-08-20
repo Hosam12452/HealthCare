@@ -6,6 +6,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Patient</title>
@@ -47,9 +48,6 @@
         .btn-import {
             background-color: #dc3545;
             color: #ffffff;
-            cursor: pointer;
-            border: none;
-            width: 100%;
         }
 
         .btn-import:hover {
@@ -61,32 +59,10 @@
             font-size: 1rem;
             color: #555;
         }
-
-        .file-input-container {
-            display: none;
-            font-weight: bold;
-            padding: 0.5em;
-            border: thin solid rgb(186, 35, 35);
-            border-radius: 3px;
-        }
-
-        .file-input-container input[type="file"] {
-            display: block;
-            margin-top: 10px;
-            color: rgb(32, 35, 38);
-            font-weight: bold;
-            padding: 0.5em;
-            border-radius: 3px;
-
-        }
-        
     </style>
 </head>
-
+<br>
 <body>
-    <br>
-    <br>
-    <br>
     <br>
     <br>
     <br>
@@ -101,8 +77,12 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <form action="{% url 'addPat' %}" method="POST">
+            <form action="addPat" method="POST">
                 {% csrf_token %}
+                <div class="form-group">
+                    <label for="id">ID</label>
+                    <input type="text" class="form-control" name="id" id="id" placeholder="Enter ID" required>
+                </div>
                 <div class="form-group">
                     <label for="fullname">Full Name</label>
                     <input type="text" class="form-control" name="full_name" id="fullname" placeholder="Enter full name" required>
@@ -157,46 +137,23 @@
                 <div class="d-flex justify-content-center align-items-center">
                     <button type="submit" class="btn btn-add">Add</button>
                     <span class="or-text">OR</span>
+                    <button type="button" class="btn btn-import">Import</button>
                 </div>
             </form>
-            <br>
-            <br>
-
-            <div class="d-flex justify-content-center align-items-center">
-                <button type="button" class="btn btn-import" id="importButton">Import Excel File</button>
-            </div>
-            <div class="file-input-container">
-                <form action="{% url 'import_patients' %}" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <input type="file" class="form-control-file" name="patient_file" id="patient_file" accept=".xlsx" required>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <button type="submit" class="btn btn-import">Submit File</button>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        document.getElementById('importButton').addEventListener('click', function () {
-            document.querySelector('.file-input-container').style.display = 'block';
-            this.style.display = 'none'; 
-        });
-    </script>
 </body>
 <br>
 <br>
 <br>
 <br>
 <br>
-<br>
-<br>
-<br>
+
+
 
 </html>
 {% endblock content %}

@@ -2,7 +2,6 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.shortcuts import HttpResponse
 from django.contrib import messages
-import pandas as pd
 from . import models
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
@@ -24,92 +23,11 @@ from django.http import HttpResponse
 import re
 from django.shortcuts import render, redirect
 from .models import Patient
-from django.db.models import Q
-from django.core.paginator import Paginator
 
 
-
-def dash(request):
-    search_query = request.GET.get('search', '')
-    age_from = request.GET.get('age_from')
-    age_to = request.GET.get('age_to')
-    score_from = request.GET.get('score_from')
-    score_to = request.GET.get('score_to')
-    gender = request.GET.getlist('gender')  # Retrieve multiple gender values as a list
-
-    query = Q(full_name__icontains=search_query)
-
-    if age_from:
-        query &= Q(age__gte=age_from)
-    if age_to:
-        query &= Q(age__lte=age_to)
-    if gender:  # Handle list of genders
-        query &= Q(gender__in=gender)
-    if score_from:
-        query &= Q(score__gte=score_from)
-    if score_to:
-        query &= Q(score__lte=score_to)
-
-    patients = models.Patient.objects.filter(query).order_by('-date')
-
-    paginator = Paginator(patients, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'page_obj': page_obj,
-        'search_query': search_query,
-        'age_from': age_from,
-        'age_to': age_to,
-        'gender': gender,
-        'score_from': score_from,
-        'score_to': score_to
-    }
-
-    return render(request, 'pages/dash.html', context)
-
-def import_patients(request):
-    if request.method == 'POST':
-        patient_file = request.FILES['patient_file']
-
-        try:
-            df = pd.read_excel(patient_file)
-
-            for index, row in df.iterrows():
-                email = row['email']
-
-                if Patient.objects.filter(email=email).exists():
-                    continue  
-
-                full_name = row['full_name']
-                address = row['address']
-                phone = row['phone']
-                age = int(row['age'])
-                gender = row['gender']
-                urgency_level = row['urgency_level']
-                action = row['action']
-                
-                score = calculate_score(gender, age, urgency_level, 0)
-                
-                Patient.objects.create(
-                    full_name=full_name,
-                    email=email,
-                    address=address,
-                    phone=phone,
-                    age=age,
-                    gender=gender,
-                    urgency_level=urgency_level,
-                    action=action,
-                    score=score
-                )
-
-            messages.success(request, 'Patients imported successfully!')
-        except Exception as e:
-            messages.error(request, f'Error importing patients: {str(e)}')
-
-        return redirect('addPat')
-
-    return render(request, 'pages/addPat.html')
+def editPat(request):
+    return render(request,'pages/editPat.html')
+ 
 
 def calculate_score(gender, age, urgency_level, waiting_time_days):
 
@@ -153,6 +71,7 @@ def addPat(request):
         urgency_level = request.POST['urgency_level']
         age = int(request.POST['age'])
         gender = request.POST['gender']
+        user_id = request.POST['id']
         action = request.POST['action']
         waiting_time_days = int(request.POST['waiting_time_days'])  
         
@@ -175,7 +94,8 @@ def addPat(request):
 
     return render(request, 'pages/addPat.html')
 
-
+def dash(request):
+    return render(request,'pages/dash.html')
 def Success(request):
     if 'user' in request.session:
         user_info = request.session['user']

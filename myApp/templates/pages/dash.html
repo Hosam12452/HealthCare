@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -55,124 +56,115 @@
         }
     </style>
 </head>
+
 <body class="container">
     <div class="row">
         <div class="col-12 table-container">
             <h2>Dashboard</h2>
-            <form action="{% url 'dash' %}" method="GET">
-                <div class="search-filter-container mb-3">
-                    <input type="text" class="form-control search-input" name="search" placeholder="Search patient by name..." value="{{ search_query }}">
-                    <div class="dropdown">
-                        <button class="btn btn-success dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Filter
-                        </button>
-                        <div class="dropdown-menu p-4" aria-labelledby="filterDropdown">
-                            <form method="GET" action="{% url 'dash' %}">
-                                <div class="form-group">
-                                    <label for="ageRange">Age:</label>
-                                    <div class="d-flex">
-                                        <input type="number" class="form-control mr-2" name="age_from" placeholder="From" value="{{ age_from }}">
-                                        <input type="number" class="form-control" name="age_to" placeholder="To" value="{{ age_to }}">
+            <div class="search-filter-container mb-3">
+                <input type="text" class="form-control search-input" placeholder="Search patient data...">
+                <div class="dropdown">
+                    <button class="btn btn-success dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Filter
+                    </button>
+                    <div class="dropdown-menu p-4" aria-labelledby="filterDropdown">
+                        <form>
+                            <div class="form-group">
+                                <label for="ageRange">Age:</label>
+                                <div class="d-flex">
+                                    <input type="number" class="form-control mr-2" placeholder="From">
+                                    <input type="number" class="form-control" placeholder="To">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Gender:</label>
+                                <div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="female">
+                                        <label class="form-check-label" for="female">Female</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="male">
+                                        <label class="form-check-label" for="male">Male</label>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Gender:</label>
-                                    <div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="gender" value="Female" {% if 'Female' in gender %}checked{% endif %}>
-                                            <label class="form-check-label">Female</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="gender" value="Male" {% if 'Male' in gender %}checked{% endif %}>
-                                            <label class="form-check-label">Male</label>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="scoreRange">Score:</label>
+                                <div class="d-flex">
+                                    <input type="number" class="form-control mr-2" placeholder="From">
+                                    <input type="number" class="form-control" placeholder="To">
                                 </div>
-                                <div class="form-group">
-                                    <label for="scoreRange">Score:</label>
-                                    <div class="d-flex">
-                                        <input type="number" class="form-control mr-2" name="score_from" placeholder="From" value="{{ score_from }}">
-                                        <input type="number" class="form-control" name="score_to" placeholder="To" value="{{ score_to }}">
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Confirm</button>
-                            </form>
-                        </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Confirm</button>
+                        </form>
                     </div>
                 </div>
+            </div>
 
-                <table class="table table-bordered table-striped">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>Date/Time</th>
-                            <th>Name</th>
-                            <th>Address/Email</th>
-                            <th>Gender</th>
-                            <th>Age</th>
-                            <th>Urgency Level</th>
-                            <th>Phone</th>
-                            <th>Action</th>
-                            <th>Score</th>
-                            <th>Ico</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if page_obj %}
-                            {% for patient in page_obj %}
-                            <tr>
-                                <td>{{ patient.date }}</td>
-                                <td>{{ patient.full_name }} - {{ patient.address }}</td>
-                                <td>{{ patient.email }}</td>
-                                <td>{{ patient.get_gender_display }}</td>
-                                <td>{{ patient.age }}</td>
-                                <td>{{ patient.get_urgency_level_display }}</td>
-                                <td>{{ patient.phone }}</td>
-                                <td>{{ patient.get_action_display }}</td>
-                                <td>{{ patient.score }}</td>
-                                <td>
-                                    <span class="icon-action text-danger">&#128465;</span> 
-                                    <span class="icon-action text-primary">&#9998;</span> 
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td colspan="10" class="text-center">No patients found</td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
+            <table class="table table-bordered table-striped">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Date/Time</th>
+                        <th>Name</th>
+                        <th>Address/Email</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Urgency Level</th>
+                        <th>Phone</th>
+                        <th>Action</th>
+                        <th>Score</th>
+                        <th>Ico</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-07-01 10:00</td>
+                        <td>John Doe-123 Elm St</td>
+                        <td>Springfield<br>john.doe@example.com</td>
+                        <td>Male</td>
+                        <td>45</td>
+                        <td>High</td>
+                        <td>(123) 456-7890</td>
+                        <td>Follow-up</td>
+                        <td>50</td>
+                        <td>
+                            <span class="icon-action text-danger">&#128465;</span> 
+                            <span class="icon-action text-primary">&#9998;</span> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2024-07-02 14:00</td>
+                        <td>Jane Smith-456 Oak St</td>
+                        <td>Springfield<br>jane.smith@example.com</td>
+                        <td>Female</td>
+                        <td>38</td>
+                        <td>Medium</td>
+                        <td>(234) 567-8910</td>
+                        <td>Schedule Visit</td>
+                        <td>70</td>
+                        <td>
+                            <span class="icon-action text-danger">&#128465;</span> 
+                            <span class="icon-action text-primary">&#9998;</span> 
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-                <div class="pagination-container">
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            {% if page_obj.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?search={{ search_query }}&page={{ page_obj.previous_page_number }}{% if age_from %}&age_from={{ age_from }}{% endif %}{% if age_to %}&age_to={{ age_to }}{% endif %}{% if gender %}&gender={{ gender|join:',' }}{% endif %}{% if score_from %}&score_from={{ score_from }}{% endif %}{% if score_to %}&score_to={{ score_to }}{% endif %}" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                            {% endif %}
-                            {% for num in page_obj.paginator.page_range %}
-                            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                                <a class="page-link" href="?search={{ search_query }}&page={{ num }}{% if age_from %}&age_from={{ age_from }}{% endif %}{% if age_to %}&age_to={{ age_to }}{% endif %}{% if gender %}&gender={{ gender|join:',' }}{% endif %}{% if score_from %}&score_from={{ score_from }}{% endif %}{% if score_to %}&score_to={{ score_to }}{% endif %}">{{ num }}</a>
-                            </li>
-                            {% endfor %}
-                            {% if page_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?search={{ search_query }}&page={{ page_obj.next_page_number }}{% if age_from %}&age_from={{ age_from }}{% endif %}{% if age_to %}&age_to={{ age_to }}{% endif %}{% if gender %}&gender={{ gender|join:',' }}{% endif %}{% if score_from %}&score_from={{ score_from }}{% endif %}{% if score_to %}&score_to={{ score_to }}{% endif %}" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                </div>
+            <div class="pagination-container">
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item"><a class="page-link" href="#">&#171;</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">&#187;</a></li>
+                    </ul>
+                </nav>
+            </div>
 
-                <div class="text-center mt-4">
-                    <button class="btn btn-success">Add Patient</button>
-                </div>
-            </form> 
+            <div class="text-center mt-4">
+                <button class="btn btn-success">Add Patient</button>
+            </div>
         </div>
     </div>
 
