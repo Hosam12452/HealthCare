@@ -1,4 +1,4 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
@@ -93,7 +93,7 @@
 
         .checkbox-group label {
             position: relative;
-            padding-left: 30px; 
+            padding-left: 30px;
             cursor: pointer;
             user-select: none;
             font-size: 14px;
@@ -102,36 +102,35 @@
         }
 
         .checkbox-group label::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 15px; 
-    height: 15px; 
-    background: #ffffff;
-    border: 2px solid #050505;
-    border-radius: 4px;
-    transition: background 0.3s, border-color 0.3s;
-}
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 15px;
+            height: 15px;
+            background: #ffffff;
+            border: 2px solid #050505;
+            border-radius: 4px;
+            transition: background 0.3s, border-color 0.3s;
+        }
 
-.checkbox-group label::after {
-    content: "";
-    position: absolute;
-    left: 6px; 
-    top: 3px; 
-    width: 6px; 
-    height: 12px; 
-    border: solid #0b0a0a;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-    opacity: 0;
-    transition: opacity 0.3s;
-}
+        .checkbox-group label::after {
+            content: "";
+            position: absolute;
+            left: 6px;
+            top: 3px;
+            width: 6px;
+            height: 12px;
+            border: solid #0b0a0a;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
 
-.checkbox-group input[type="checkbox"]:checked + label::after {
-    opacity: 1;
-}
-
+        .checkbox-group input[type="checkbox"]:checked + label::after {
+            opacity: 1;
+        }
 
         .forgot-password-remember {
             display: flex;
@@ -156,79 +155,53 @@
             text-decoration: none;
             font-size: 12px;
         }
-        #fofo {
-    float: left;
-    margin-right: 20px;
-}
 
-#fofo img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
+        #fofo {
+            float: left;
+            margin-right: 20px;
+        }
+
+        #fofo img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="login-page">
+        {% load static %}
         <div class="form">
-            <img id="fofo" src="image/ik.png" alt="gust" width="20">
-            <form class="login-form">
-                <input type="email" name="myemail" placeholder="email" id="login-username"/>
-                <img id="fofo"src="image/ik2.png" alt="pass" width="20">
-                <input type="password" name="mypassword" placeholder="password" id="login-password"/>
-                <button type="button" onclick="login()">Login</button>
+            <!-- Display error message if login fails -->
+            {% if error_message %}
+                <div class="error-message">{{ error_message }}</div>
+            {% endif %}
+
+            <form action="login" method="POST" class="login-form">
+                {% csrf_token %}
+                <img id="fofo" src="{% static 'photo/ik.png' %}" alt="gust" width="20" height="20">
+                <input type="email" name="email" placeholder="Email" id="login-username" required />
+                <img id="fofo" src="{% static 'photo/ik2.png' %}" alt="gust" width="20" height="20">
+                <input type="password" name="password" placeholder="Password" id="login-password" required />
                 <div class="forgot-password-remember">
                     <a href="#" class="forgot-password">Forgot Password?</a>
                     <div class="checkbox-group">
-                        <input type="checkbox" id="remember-me"/>
+                        <input type="checkbox" id="remember-me" />
                         <label class="rememberme" for="remember-me">Remember me</label>
                     </div>
                 </div>
-
-                <p class="message">Not registered? <a href="#" onclick="showRegisterForm()">Create an account</a></p>
+                <button type="submit">Login</button>
+                <p class="message">Not registered? <a href="register">Create an account</a></p>
             </form>
         </div>
     </div>
-    <script>
-        function showRegisterForm() {
-            document.querySelector('.login-form').classList.remove('show');
-            document.querySelector('.register-form').classList.add('show');
-        }
-
-        function showLoginForm() {
-            document.querySelector('.register-form').classList.remove('show');
-            document.querySelector('.login-form').classList.add('show');
-        }
-
-        function register() {
-            const name = document.getElementById('register-name').value;
-            const password = document.getElementById('register-password').value;
-            const email = document.getElementById('register-email').value;
-
-            console.log(`Registering: Name=${name}, Password=${password}, Email=${email}`);
-        }
-
-        function login() {
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-
-            console.log(`Logging in: Username=${username}, Password=${password}`);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            showLoginForm();
-        });
-
-        document.querySelectorAll('.message a').forEach(anchor => {
-            anchor.addEventListener('click', function(event) {
-                event.preventDefault();
-                document.querySelectorAll('form').forEach(form => {
-                    form.style.display = form.style.display === 'none' ? 'block' : 'none';
-                });
-            });
-        });
-    </script>
 </body>
 </html>
-
-    {% endblock content %}
+{% endblock content %}
