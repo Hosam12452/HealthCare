@@ -1,3 +1,4 @@
+# Importing necessary Django modules and utilities
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
@@ -23,13 +24,53 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout
 import pandas as pd
 import re
 
+# View function to login to the system
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from .models import Users
 
+def login_user(request):
+    if request.method == "POST":
+        email = request.POST['email']
+        password = request.POST['password']
+        
+        # Authenticate using the email as the username field
+        authenticated_user = authenticate(request, username=email, password=password)
+        
+        if authenticated_user:
+            if not authenticated_user.is_active:
+                error_message = "Your email address is not verified. Please check your email for the verification link."
+                return render(request, 'pages/login.html', {'error_message': error_message})
+            
+            # Log the user in
+            login(request, authenticated_user)
+            return redirect('/pages/dash')
+        else:
+            error_message = "Invalid email or password."
+
+        return render(request, 'pages/login.html', {'error_message': error_message})
+    
+    return render(request, 'pages/login.html')
+
+
+
+def logout_user(request):
+    logout(request)  # This will log the user out by clearing the session data
+    return redirect('login')  # Redirect to the login page or any other page after logout
+
+
+# Function to calculate a patient's score based on gender, age, urgency level, and waiting time
 def calculate_score(gender, age, urgency_level, waiting_time_days):
     gender_score = 20 if gender.lower() == 'female' else 15
-    
+
+    # Determine the score based on age brackets
     if age > 65 or age < 5:
         age_score = 30
     elif 5 <= age <= 10 or 55 <= age <= 65:
@@ -37,6 +78,8 @@ def calculate_score(gender, age, urgency_level, waiting_time_days):
     else:
         age_score = 15
     
+
+        # Mapping urgency levels to scores
     urgency_mapping = {
         'ultra': 40,
         'high': 30,
@@ -57,6 +100,8 @@ def calculate_score(gender, age, urgency_level, waiting_time_days):
     total_score = gender_score + age_score + urgency_score + waiting_time_score
     return total_score
 
+
+# View function to add a new patient
 def addPat(request):
     if request.method == "POST":
         fullname = request.POST['full_name']
@@ -90,6 +135,9 @@ def addPat(request):
         return redirect('addPat')  
     return render(request, 'pages/addPat.html') 
 
+
+# View function for the dashboard, including search, filtering, and pagination
+@login_required
 def dash(request):
     search_query = request.GET.get('search', '')  
     age_from = request.GET.get('age_from')
@@ -99,6 +147,8 @@ def dash(request):
     gender = request.GET.getlist('gender')  
     print(search_query, age_from, age_to,score_from, score_to, gender)
 
+
+    # Build the query object for filtering patients
     query = Q(full_name__icontains=search_query)
 
     if age_from:
@@ -112,6 +162,8 @@ def dash(request):
     if score_to:
         query &= Q(score__lte=score_to)
         
+
+    # Filter patients based on search and other criteria
     if search_query:
         patients = models.Patient.objects.filter(Q(full_name__icontains=search_query)).order_by('-date')
     else:
@@ -135,6 +187,8 @@ def dash(request):
     
     return render(request, 'pages/dash.html', context)
 
+
+# View function to import patients from an uploaded Excel file
 def import_patients(request):
     if request.method == 'POST':
         patient_file = request.FILES['patient_file']
@@ -156,6 +210,8 @@ def import_patients(request):
                 urgency_level = row['urgency_level']
                 action = row['action']
                 
+                
+                # Calculate the patient's score based on the data in the Excel file
                 score = calculate_score(gender, age, urgency_level, 0)
                 
                 models.Patient.objects.create(
@@ -177,6 +233,8 @@ def import_patients(request):
         return redirect('addPat')
 
     return render(request, 'pages/addPat.html')
+
+# View function to view the users information
 def Success(request):
     if 'user' in request.session:
         user_info = request.session['user']
@@ -188,14 +246,20 @@ def Success(request):
     else:
         return HttpResponse("You are not logged in")
     
+
+    #View function to view the index page
 def index(request):
     return render(request,"pages/index.html")
+
+
+#View function to view the about page
 def about(request):
     return render(request,"pages/about.html")
 
+
+#Function to create a user
 def create_user(id,fname, lname, email, passwd, phone):
-    salt = bcrypt.gensalt()
-    enc_pass = bcrypt.hashpw(passwd.encode(), salt).decode()
+    enc_pass = make_password(passwd)
     new_user = models.Users.objects.create(
         first_name=fname,
         last_name=lname,
@@ -206,6 +270,8 @@ def create_user(id,fname, lname, email, passwd, phone):
     )
     return new_user
 
+
+#Function to activate the email of the user
 def activate(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -222,6 +288,8 @@ def activate(request, uidb64, token):
 
     return render(request, 'activation_done.html')
 
+
+#Function for register the user into the system, include send the email verfication 
 def register(request):
     if request.method == "POST":
         first_name = request.POST['first_name']
@@ -278,6 +346,8 @@ def register(request):
     
     return render(request, 'pages/register.html')
 
+
+# View function to edit an existing patient data
 def edit_patient(request, id):
     patient = models.Patient.objects.get(id=id)
     print(id)
@@ -301,6 +371,8 @@ def edit_patient(request, id):
 
     return render(request, 'pages/edit_patient.html', {'patient': patient})
 
+
+# View function to delete a patient based on their ID
 def delete_patient(request, id):
     patient = models.Patient.objects.get(id=id)
     
@@ -309,33 +381,6 @@ def delete_patient(request, id):
         messages.success(request, f'Patient {patient.full_name} deleted successfully!')
         return redirect('/pages/dash')
     
-def login(request):
-    if request.method == "POST":
-        email = request.POST['email']
-        password = request.POST['password']
-        user = models.Users.objects.filter(email=email).first()
-
-        if user:
-            if not user.is_active:
-                error_message = "Your email address is not verified. Please check your email for the verification link."
-                return render(request, 'pages/login.html', {'error_message': error_message})
-            
-            if bcrypt.checkpw(password.encode(), user.password.encode()):
-                request.session['user'] = {
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'email': user.email
-                }
-                return redirect('/pages/success')
-            else:
-                error_message = "Invalid email or password."
-        else:
-            error_message = "Invalid email or password."
-
-        return render(request, 'pages/login.html', {'error_message': error_message})
-    
-    return render(request, 'pages/login.html')
-
 
 
 

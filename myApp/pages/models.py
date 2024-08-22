@@ -1,15 +1,12 @@
+# Importing necessary Django modules and utilities
 from django.db import models
 import re
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-class Student(models.Model):
-    first_name = models.CharField(max_length=45)
-    last_name = models.CharField(max_length=45)
-    email = models.EmailField()
 
-class Course(models.Model):
-    name = models.CharField(max_length=255)
-    student = models.ForeignKey(Student, related_name="courses", on_delete=models.CASCADE)
 
+# Define a custom manager for the Users model, including a basic validator for form validation
 class UserManager(models.Manager):
     def basic_validator(self, postData):
         errors = {}
@@ -30,7 +27,32 @@ class UserManager(models.Manager):
 
         return errors
 
-class Users(models.Model):
+
+# Define the Users model with fields for user information, including custom manager and methods
+class UserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(email, password, **extra_fields)
+
+
+class Users(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
@@ -40,13 +62,35 @@ class Users(models.Model):
     last_login = models.DateTimeField(null=True, blank=True)
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)  # Required by Django admin
 
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
+    objects = UserManager()
+
+    def get_full_name(self):
+        return f'{self.first_name} {self.last_name}'
+
+    def get_short_name(self):
+        return self.first_name
+
+
+    # Method to set the user's password (hashing it)
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+        self.save()
+
+    # Method to check the password during authentication
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password)
+    
     def get_email_field_name(self):
         return 'email'
     objects = UserManager()
 
+
+# Define the Patient model with various fields, including choice fields for gender and urgency level
 class Patient(models.Model):
     class UrgencyLevel(models.TextChoices):
         LOW = 'Low', 'Low'

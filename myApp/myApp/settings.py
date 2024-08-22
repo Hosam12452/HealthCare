@@ -133,8 +133,15 @@ EMAIL_HOST_USER = 'bakr0592260950@gmail.com'  # Replace with your Gmail address
 EMAIL_HOST_PASSWORD = 'atwe jcxl klgr znvi'  # Replace with your Gmail app-specific password
 DEFAULT_FROM_EMAIL = 'bakr0592260950@gmail.com'
 
+SESSION_COOKIE_SECURE = False
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_URL = 'login'
+
+AUTHENTICATION_BACKENDS = ['pages.backends.EmailBackend']
+AUTH_USER_MODEL = 'pages.Users'
