@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background: #387e23;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-top: 2rem;
+            box-shadow: none;
+        }
+
+        h2, h3 {
+            color: #131111;
+            font-weight: normal;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            font-weight: normal;
+            color: #0b0b0b;
+        }
+
+        .form-control {
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button.btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+            border-radius: 4px;
+        }
+
+        button.btn-primary:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .alert-success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border-color: #d0e9c6;
+        }
+
+        hr {
+            border-top: 1px solid #e9ecef;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Hello, Admin</h2>
+
+    <div class="container">
+        <!-- Display Messages -->
+        {% if messages %}
+            <div class="alert alert-success">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Password Form -->
+        {% if not authenticated %}
+            <form action="{% url 'admin_dashbord' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="password">Admin Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Password</button>
+            </form>
+        {% else %}
+            <!-- Gender Management Form -->
+            <form action="{% url 'manage_genders' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="gender_name">Gender Name</label>
+                    <input type="text" class="form-control" id="gender_name" name="gender_name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Gender</button>
+            </form>
+
+            <hr>
+
+            <!-- Manage Actions -->
+            <form action="{% url 'manage_actions' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="action_name">Action Name</label>
+                    <input type="text" class="form-control" id="action_name" name="action_name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Action</button>
+            </form>
+
+            <hr>
+
+            <!-- Manage Urgency Levels -->
+            <form action="{% url 'manage_urgency_levels' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="urgency_name">Urgency Level Name</label>
+                    <input type="text" class="form-control" id="urgency_name" name="urgency_name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Urgency Level</button>
+            </form>
+            <hr>
+
+            <!-- Manage stauts  -->
+            <form action="{% url 'manage_stauts' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="stauts_name">stauts Name</label>
+                    <input type="text" class="form-control" id="stauts_name" name="stauts_name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add stauts </button>
+            </form>
+        {% endif %}
+    </div>
+
+    <br>
+    <br>
+</body>
+
+</html>
+{% endblock content %}

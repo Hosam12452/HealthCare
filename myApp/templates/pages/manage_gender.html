@@ -1,0 +1,12 @@
+<!-- manage_gender.html -->
+<h1>Manage Gender</h1>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="name" placeholder="Gender Name" required>
+    <button type="submit">Add Gender</button>
+</form>
+<ul>
+    {% for gender in genders %}
+    <li>{{ gender.name }}</li>
+    {% endfor %}
+</ul>

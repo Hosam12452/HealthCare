@@ -12,6 +12,7 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        /* CSS styles */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f8f9fa;
@@ -77,9 +78,7 @@
             font-weight: bold;
             padding: 0.5em;
             border-radius: 3px;
-
         }
-        
     </style>
 </head>
 
@@ -101,26 +100,32 @@
             {% endif %}
             <form action="{% url 'addPat' %}" method="POST">
                 {% csrf_token %}
+                <!-- Identity -->
                 <div class="form-group">
                     <label for="ID">ID</label>
                     <input type="text" class="form-control" name="id" id="ID" placeholder="ID" required>
                 </div>
+                <!-- Name -->
                 <div class="form-group">
                     <label for="fullname">Full Name</label>
                     <input type="text" class="form-control" name="full_name" id="fullname" placeholder="Enter full name" required>
                 </div>
+                <!-- Email -->
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" class="form-control" name="email" id="email" placeholder="Enter email" required>
                 </div>
+                <!-- Address -->
                 <div class="form-group">
                     <label for="address">Address</label>
                     <input type="text" class="form-control" name="address" id="address" placeholder="Enter address" required>
                 </div>
+                <!-- Phone Number -->
                 <div class="form-group">
                     <label for="phone">Phone Number</label>
                     <input type="tel" class="form-control" name="phone" id="phone" placeholder="Enter phone number" required>
                 </div>
+                <!-- Urgency Level -->
                 <div class="form-group">
                     <label for="urgency_level">Urgency Level</label>
                     <select class="form-control" name="urgency_level" id="urgency_level" required>
@@ -128,34 +133,64 @@
                         <option value="High">High</option>
                         <option value="Medium">Medium</option>
                         <option value="Low">Low</option>
+                        {% for urgency_level in urgency_levels %}
+                        <option value="{{ urgency_level.name }}">{{ urgency_level.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
+                <!-- Action -->
                 <div class="form-group">
                     <label for="action">Action</label>
-                    <select class="form-control" name="action" id="action" required>
-                        <option value="UPDATE MEDICAL RECORDS">UPDATE MEDICAL RECORDS</option>
-                        <option value="ORDER DIAGNOSTIC TESTS">ORDER DIAGNOSTIC TESTS</option>
-                        <option value="REFER TO SPECIALIST">REFER TO SPECIALIST</option>
-                        <option value="DISCHARGE PATIENT">DISCHARGE PATIENT</option>
-                        <option value="PROVIDE HEALTH EDUCATION">PROVIDE HEALTH EDUCATION</option>
-                    </select>
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <select class="form-control" name="action" id="action" required>
+                                <option value="UPDATE MEDICAL RECORDS">UPDATE MEDICAL RECORDS</option>
+                                <option value="ORDER DIAGNOSTIC TESTS">ORDER DIAGNOSTIC TESTS</option>
+                                <option value="REFER TO SPECIALIST">REFER TO SPECIALIST</option>
+                                <option value="DISCHARGE PATIENT">DISCHARGE PATIENT</option>
+                                <option value="PROVIDE HEALTH EDUCATION">PROVIDE HEALTH EDUCATION</option>
+                                {% for action in actions %}
+                                <option value="{{ action.name }}">{{ action.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="note" id="note" placeholder="Add note">
+                        </div>
+                    </div>
                 </div>
+                <!-- Age and Gender -->
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="age">Age</label>
-                        <input type="number" class="form-control" name="age" id="age" placeholder="Enter age" required>
+                        <input type="number" class="form-control" name="age" id="age" placeholder="Enter age" required min="0" max="200">
                     </div>
                     <div class="form-group col-md-6">
                         <label for="gender">Gender</label>
                         <select class="form-control" name="gender" id="gender" required>
-                            <option value="">Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
+                            {% for gender in genders %}
+                            <option value="{{ gender.name }}">{{ gender.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
+                <!-- Status -->
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select class="form-control" name="status" id="status" required>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Completed">Completed</option>
+                        {% for status in statuses %}
+                            <option value="{{ status.name }}">{{ status.name }}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+                <!-- Adding data to the database -->
                 <input type="hidden" name="waiting_time_days" value="0">
-
                 <div class="d-flex justify-content-center align-items-center">
                     <button type="submit" class="btn btn-add">Add</button>
                     <span class="or-text">OR</span>
@@ -163,7 +198,7 @@
             </form>
             <br>
             <br>
-
+            <!-- Import group of patients -->
             <div class="d-flex justify-content-center align-items-center">
                 <button type="button" class="btn btn-import" id="importButton">Import Excel File</button>
             </div>

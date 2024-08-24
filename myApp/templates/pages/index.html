@@ -65,7 +65,7 @@
             margin: 20px auto;
             width: 50%;
         }
-        #fofo1{
+        #fofo1 {
             margin-left: 20px;
         }
     </style>
@@ -74,13 +74,14 @@
     <header>
         <div class="header-content">
             <span class="title">Healthcare</span>
-            <a id="fofo1" href="login" class="btn">sing in</a>
-            <a id="fofo1"href="register" class="btn">sign up</a>
+            <a id="fofo1" href="{% url 'admin_dashbord' %}" class="btn">Admin Dashboard</a>
+            <a id="fofo1" href="{% url 'login' %}" class="btn">Sign In</a>
+            <a id="fofo1" href="{% url 'register' %}" class="btn">Sign Up</a>
         </div>
     </header>
     <main>
         {% csrf_token %}
-        <img  src="{% static 'photo/accueil-patient-2048x890.jpg' %}" alt="home" width="100%" height="100%">
+        <img src="{% static 'photo/accueil-patient-2048x890.jpg' %}" alt="home" width="100%" height="100%">
         <hr class="line">
     </main>
 </body>

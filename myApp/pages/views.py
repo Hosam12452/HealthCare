@@ -1,13 +1,11 @@
 # Importing necessary Django modules and utilities
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
-
 from django.shortcuts import HttpResponse
 from django.contrib import messages
 from . import models
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
-import bcrypt
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.utils.http import urlsafe_base64_decode
@@ -29,13 +27,79 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 import pandas as pd
-import re
-
-# View function to login to the system
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from .models import Users
 
+
+
+#View function to view the index page
+def index(request):
+    return render(request,"pages/index.html")
+
+
+#View function to view the about page
+def about(request):
+    return render(request,"pages/about.html")
+
+#Function for register the user into the system, include send the email verfication 
+def register(request):
+    if request.method == "POST":
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        phone = request.POST['phone']
+        email = request.POST['email']
+        password = request.POST['password']
+        password_confirmation = request.POST['password_confirmation']
+        user_id = request.POST['id']
+        errors = {}
+
+        if len(first_name) < 2:
+            errors['first_name'] = "First name must be at least 2 characters."
+        if len(last_name) < 2:
+            errors['last_name'] = "Last name must be at least 2 characters."
+        if len(password) < 8 or not any(char.isalpha() for char in password):
+            errors['password'] = "Password must be at least 8 characters long and contain at least one letter."
+        if password != password_confirmation:
+            errors['password_confirmation'] = "Passwords do not match."
+
+        model_errors = models.Users.objects.basic_validator(request.POST)
+        errors.update(model_errors)
+
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request, value)
+            return redirect('/pages/register')
+        else:
+            user = create_user(user_id, first_name,last_name, email, password, phone)
+            
+            # Generate email verification token
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = token_generator.make_token(user)
+            
+            # Prepare email
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your account.'
+            message = render_to_string('pages/email_verification.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': uid,
+                'token': token,
+            })
+            send_mail(
+                mail_subject,
+                message,
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                fail_silently=False,
+            )
+            
+            messages.success(request, 'Please confirm your email address to complete the registration.')
+            return redirect('login')
+    
+    return render(request, 'pages/register.html')
+
+# View function to login to the system
 def login_user(request):
     if request.method == "POST":
         email = request.POST['email']
@@ -101,41 +165,6 @@ def calculate_score(gender, age, urgency_level, waiting_time_days):
     return total_score
 
 
-# View function to add a new patient
-def addPat(request):
-    if request.method == "POST":
-        fullname = request.POST['full_name']
-        email = request.POST['email']
-        address = request.POST['address']
-        phone = request.POST['phone']
-        urgency_level = request.POST['urgency_level']
-        age = int(request.POST['age'])
-        gender = request.POST['gender']
-        user_id = request.POST['id']
-        action = request.POST['action']
-        waiting_time_days = int(request.POST['waiting_time_days'])  
-        score = calculate_score(gender, age, urgency_level, waiting_time_days)
-        
-        new_patient = models.Patient.objects.create(
-            full_name=fullname,
-            email=email,
-            address=address,
-            phone=phone,
-            urgency_level=urgency_level,
-            age=age,
-            gender=gender,
-            id=user_id,
-            score=score,
-            action=action,
-        )
-        new_patient.save()
-        print (score)
-        
-        messages.success(request, f'Patient {fullname} added successfully!')
-        return redirect('addPat')  
-    return render(request, 'pages/addPat.html') 
-
-
 # View function for the dashboard, including search, filtering, and pagination
 @login_required
 def dash(request):
@@ -187,6 +216,61 @@ def dash(request):
     
     return render(request, 'pages/dash.html', context)
 
+# View function to add a new patient
+@login_required
+def addPat(request):
+    if request.method == "POST":
+        fullname = request.POST['full_name']
+        email = request.POST['email']
+        address = request.POST['address']
+        phone = request.POST['phone']
+        urgency_level = request.POST['urgency_level']
+        age = int(request.POST['age'])
+        gender = request.POST['gender']
+        user_id = request.POST['id']
+        action = request.POST['action']
+        status = request.POST['status']
+        note = request.POST['note']
+        waiting_time_days = int(request.POST['waiting_time_days'])  
+        score = calculate_score(gender, age, urgency_level, waiting_time_days)
+        
+        new_patient = models.Patient.objects.create(
+            full_name=fullname,
+            email=email,
+            address=address,
+            phone=phone,
+            urgency_level=urgency_level,
+            age=age,
+            gender=gender,
+            id=user_id,
+            score=score,
+            action=action,
+            status=status,
+            note=note,
+        )
+        new_patient.save()
+        print (score)
+    
+        
+        messages.success(request, f'Patient {fullname} added successfully!')
+        return redirect('addPat')  
+    genders = models.Gender.objects.all()
+    actions = models.Action.objects.all()
+    urgency_levels = models.UrgencyLevel.objects.all()
+    statuses = models.Status.objects.all()
+    
+    context = {
+        'genders': genders,
+        'actions': actions,
+        'urgency_levels': urgency_levels,
+        'statuses': statuses,
+    }
+    
+    return render(request, 'pages/addPat.html', context)
+
+
+
+
 
 # View function to import patients from an uploaded Excel file
 def import_patients(request):
@@ -234,6 +318,54 @@ def import_patients(request):
 
     return render(request, 'pages/addPat.html')
 
+
+# View function to edit an existing patient data
+def edit_patient(request, id):
+    patient = models.Patient.objects.get(id=id)
+    print(id)
+    if request.method == 'POST':
+        patient.full_name = request.POST['full_name']
+        patient.email = request.POST['email']
+        patient.address = request.POST['address']
+        patient.phone = request.POST['phone']
+        patient.urgency_level = request.POST['urgency_level']
+        patient.age = int(request.POST['age'])
+        patient.gender = request.POST['gender']
+        patient.action = request.POST['action']
+        
+        
+        waiting_time_days = int(request.POST['waiting_time_days'])
+        patient.score = calculate_score(patient.gender, patient.age, patient.urgency_level, waiting_time_days)
+        
+        patient.save()
+        messages.success(request, f'Patient {patient.full_name} updated successfully!')
+        return redirect('../../dash')
+    
+    genders = models.Gender.objects.all()
+    actions = models.Action.objects.all()
+    urgency_levels = models.UrgencyLevel.objects.all()
+    statuses = models.Status.objects.all()
+    
+    context = {
+        'genders': genders,
+        'actions': actions,
+        'urgency_levels': urgency_levels,
+        'statuses': statuses,
+        'patient' : patient
+    }
+
+    return render(request, 'pages/edit_patient.html', context)
+
+
+# View function to delete a patient based on their ID
+def delete_patient(request, id):
+    patient = models.Patient.objects.get(id=id)
+    
+    if request.method == 'POST':
+        patient.delete()
+        messages.success(request, f'Patient {patient.full_name} deleted successfully!')
+        return redirect('/pages/dash')
+    
 # View function to view the users information
 def Success(request):
     if 'user' in request.session:
@@ -247,14 +379,7 @@ def Success(request):
         return HttpResponse("You are not logged in")
     
 
-    #View function to view the index page
-def index(request):
-    return render(request,"pages/index.html")
 
-
-#View function to view the about page
-def about(request):
-    return render(request,"pages/about.html")
 
 
 #Function to create a user
@@ -289,107 +414,61 @@ def activate(request, uidb64, token):
     return render(request, 'activation_done.html')
 
 
-#Function for register the user into the system, include send the email verfication 
-def register(request):
-    if request.method == "POST":
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        phone = request.POST['phone']
-        email = request.POST['email']
-        password = request.POST['password']
-        password_confirmation = request.POST['password_confirmation']
-        user_id = request.POST['id']
-        errors = {}
+def admin_dashbord(request):
+    if request.method == 'POST':
+        if 'password' in request.POST:
+            # Check the password
+            password = request.POST.get('password')
+            if password == 'admin123':
+                # Password is correct, mark user as authenticated
+                request.session['authenticated'] = True
+                return render(request, 'pages/admin_dashbord.html', {
+                    'authenticated': True
+                })
+            else:
+                messages.error(request, 'Invalid password.')
+    else:
+        # If GET request, reset authentication
+        request.session['authenticated'] = False
 
-        if len(first_name) < 2:
-            errors['first_name'] = "First name must be at least 2 characters."
-        if len(last_name) < 2:
-            errors['last_name'] = "Last name must be at least 2 characters."
-        if len(password) < 8 or not any(char.isalpha() for char in password):
-            errors['password'] = "Password must be at least 8 characters long and contain at least one letter."
-        if password != password_confirmation:
-            errors['password_confirmation'] = "Passwords do not match."
+    return render(request, 'pages/admin_dashbord.html', {
+        'authenticated': request.session.get('authenticated', False)
+    })
 
-        model_errors = models.Users.objects.basic_validator(request.POST)
-        errors.update(model_errors)
 
-        if len(errors) > 0:
-            for key, value in errors.items():
-                messages.error(request, value)
-            return redirect('/pages/register')
+
+def manage_genders(request):
+    if request.method == 'POST':
+        gender_name = request.POST.get('gender_name')
+        if gender_name:
+            models.Gender.objects.create(name=gender_name)
+            messages.success(request, 'Gender added successfully.')
         else:
-            user = create_user(user_id, first_name,last_name, email, password, phone)
-            
-            # Generate email verification token
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            token = token_generator.make_token(user)
-            
-            # Prepare email
-            current_site = get_current_site(request)
-            mail_subject = 'Activate your account.'
-            message = render_to_string('pages/email_verification.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': uid,
-                'token': token,
-            })
-            send_mail(
-                mail_subject,
-                message,
-                settings.EMAIL_HOST_USER,
-                [user.email],
-                fail_silently=False,
-            )
-            
-            messages.success(request, 'Please confirm your email address to complete the registration.')
-            return redirect('login')
-    
-    return render(request, 'pages/register.html')
-
-
-# View function to edit an existing patient data
-def edit_patient(request, id):
-    patient = models.Patient.objects.get(id=id)
-    print(id)
-    if request.method == 'POST':
-        patient.full_name = request.POST['full_name']
-        patient.email = request.POST['email']
-        patient.address = request.POST['address']
-        patient.phone = request.POST['phone']
-        patient.urgency_level = request.POST['urgency_level']
-        patient.age = int(request.POST['age'])
-        patient.gender = request.POST['gender']
-        patient.action = request.POST['action']
-        
-        
-        waiting_time_days = int(request.POST['waiting_time_days'])
-        patient.score = calculate_score(patient.gender, patient.age, patient.urgency_level, waiting_time_days)
-        
-        patient.save()
-        messages.success(request, f'Patient {patient.full_name} updated successfully!')
-        return redirect('../../dash')
-
-    return render(request, 'pages/edit_patient.html', {'patient': patient})
-
-
-# View function to delete a patient based on their ID
-def delete_patient(request, id):
-    patient = models.Patient.objects.get(id=id)
-    
-    if request.method == 'POST':
-        patient.delete()
-        messages.success(request, f'Patient {patient.full_name} deleted successfully!')
-        return redirect('/pages/dash')
-    
+            messages.error(request, 'Gender name cannot be empty.')
+    return redirect('admin_dashbord')
 
 
 
-def Success1(request):
-    if 'fname' not in request.session:
-        return redirect('/pages/login')
-    
-    context = {
-        'fname': request.session['fname'],
-        'lname': request.session['lname'],
-    }
-    return render(request, "success.html", context)
+def manage_actions(request):
+    action_name = request.POST.get('action_name')
+    if action_name:
+        models.Action.objects.create(name=action_name)
+        messages.success(request, 'Action added successfully.')
+    return redirect('admin_dashbord')
+
+
+
+def manage_urgency_levels(request):
+    urgency_name = request.POST.get('urgency_name')
+    if urgency_name:
+        models.UrgencyLevel.objects.create(name=urgency_name)
+        messages.success(request, 'Urgency level added successfully.')
+    return redirect('admin_dashbord')
+
+def manage_stauts(request):
+    stauts_name = request.POST.get('stauts_name')
+    if stauts_name:
+        models.Status.objects.create(name=stauts_name)
+        messages.success(request, ' stauts added successfully.')
+    return redirect('admin_dashbord')
+

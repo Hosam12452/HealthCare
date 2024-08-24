@@ -102,6 +102,9 @@
                         <option value="Medium" {% if patient.urgency_level == 'Medium' %}selected{% endif %}>Medium</option>
                         <option value="High" {% if patient.urgency_level == 'High' %}selected{% endif %}>High</option>
                         <option value="Ultra" {% if patient.urgency_level == 'Ultra' %}selected{% endif %}>Ultra</option>
+                        {% for urgency_level in urgency_levels %}
+                            <option value="{{ urgency_level.name }}">{{ urgency_level.name }}</option>
+                            {% endfor %}
                     </select>
                 </div>
                 <div class="form-row">
@@ -115,6 +118,9 @@
                             <option value="">Gender</option>
                             <option value="Male" {% if patient.gender == 'Male' %}selected{% endif %}>Male</option>
                             <option value="Female" {% if patient.gender == 'Female' %}selected{% endif %}>Female</option>
+                            {% for gender in genders %}
+                            <option value="{{ gender.name }}">{{ gender.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="form-group col-md-6">
@@ -126,6 +132,9 @@
                             <option value="Discharge Patient" {% if patient.action == 'Discharge Patient' %}selected{% endif %}>Discharge Patient</option>
                             <option value="Provide Health Education" {% if patient.action == 'Provide Health Education' %}selected{% endif %}>Provide Health Education</option>
                             <option value="Perform a Procedure" {% if patient.action == 'Perform a Procedure' %}selected{% endif %}>Perform a Procedure</option>
+                            {% for Action in Actions %}
+                            <option value="{{ Action.name }}">{{ Action.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
