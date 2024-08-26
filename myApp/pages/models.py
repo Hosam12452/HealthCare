@@ -3,12 +3,12 @@
 from django.db import models
 import re
 from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import BaseUserManager
 
 
 
 # Define a custom manager for the Users model, including a basic validator for form validation
-class UserManager(models.Manager):
+class UserManager(BaseUserManager):
     def basic_validator(self, postData):
         errors = {}
 
@@ -28,8 +28,11 @@ class UserManager(models.Manager):
 
         return errors
 
+    def get_by_natural_key(self, username):
+        return self.get(email=username)
 
-class Users(AbstractBaseUser, PermissionsMixin):
+
+class Users(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
@@ -136,3 +139,21 @@ class Status(models.Model):
 
     def __str__(self):
         return self.name
+    
+class ScoreSettings(models.Model):
+    gender_female_score = models.IntegerField(default=20)
+    gender_male_score = models.IntegerField(default=15)
+
+    age_above_65_or_below_5_score = models.IntegerField(default=30)
+    age_between_5_and_10_or_55_and_65_score = models.IntegerField(default=20)
+    age_others_score = models.IntegerField(default=15)
+
+    urgency_ultra_score = models.IntegerField(default=40)
+    urgency_high_score = models.IntegerField(default=30)
+    urgency_medium_score = models.IntegerField(default=20)
+    urgency_low_score = models.IntegerField(default=10)
+
+    waiting_time_less_than_10_days_score = models.IntegerField(default=0)
+    waiting_time_11_to_30_days_score = models.IntegerField(default=5)
+    waiting_time_31_to_60_days_score = models.IntegerField(default=8)
+    waiting_time_above_60_days_score = models.IntegerField(default=10)

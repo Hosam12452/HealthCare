@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'adminapp',
     'pages.apps.PagesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -119,7 +120,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'gic\static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'pages\static')]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
 MEDIA_URL = '/image/'
@@ -143,5 +144,4 @@ SESSION_COOKIE_SECURE = False
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 
-AUTHENTICATION_BACKENDS = ['pages.backends.EmailBackend']
-AUTH_USER_MODEL = 'pages.Users'
+AUTH_USER_MODEL = 'auth.user'
