@@ -175,6 +175,11 @@
                         </ul>
                     </nav>
                 </div>
+                <div class="text-end mb-3">
+                    <a href="{% url 'generate_report' %}?page={{ page_obj.number }}" class="btn btn-secondary">
+                        Generate Report
+                    </a>
+                </div>
 
                 <div class="text-center mt-4">
                     <a href="../addPat" class="btn btn-success">Add Patient</a>

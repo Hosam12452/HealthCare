@@ -19,6 +19,7 @@ urlpatterns=[
     path('manage-actions/', views.manage_actions, name='manage_actions'),
     path('manage-urgency-levels/', views.manage_urgency_levels, name='manage_urgency_levels'),
     path('manage_stauts/', views.manage_stauts, name='manage_stauts'),
+    path('generate_report/', views.generate_report, name='generate_report'),
 
 
 ]

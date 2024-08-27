@@ -30,6 +30,14 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from .models import Users
 import bcrypt as bcrypt
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from io import BytesIO
+import matplotlib.pyplot as plt
+from io import BytesIO
+from django.core.files.base import ContentFile
+import numpy as np
+import base64
 
 
 #View function to view the index page
@@ -114,6 +122,75 @@ def register(request):
     return render(request, 'pages/register.html')
 
 
+def generate_report(request):
+    page_number = request.GET.get('page', 1)
+    search_query = request.GET.get('search', '')
+    age_from = request.GET.get('age_from')
+    age_to = request.GET.get('age_to')
+    score_from = request.GET.get('score_from')
+    score_to = request.GET.get('score_to')
+    gender = request.GET.getlist('gender')
+
+    # Build the query object for filtering patients
+    query = Q(full_name__icontains=search_query)
+
+    if age_from:
+        query &= Q(age__gte=age_from)
+    if age_to:
+        query &= Q(age__lte=age_to)
+    if gender:
+        query &= Q(gender__in=gender)
+    if score_from:
+        query &= Q(score__gte=score_from)
+    if score_to:
+        query &= Q(score__lte=score_to)
+
+    # Filter patients based on the query
+    patients = models.Patient.objects.filter(query).order_by('-score')
+
+    # Paginate the patients
+    paginator = Paginator(patients, 6)  # Same page size as the dashboard
+    page_obj = paginator.get_page(page_number)
+
+    # Create a distribution chart based on the name and score of the patients
+    names = [patient.full_name for patient in page_obj]
+    scores = [patient.score for patient in page_obj]
+
+    plt.figure(figsize=(8, 5))
+    plt.barh(names, scores, color='skyblue')
+    plt.xlabel('Score')
+    plt.ylabel('Patient Name')
+    plt.title('Patient Score Distribution')
+
+    # Save the plot to a BytesIO object
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()
+    buffer.seek(0)
+
+    # Encode the image to base64 to embed in the HTML template
+    image_png = buffer.getvalue()
+    chart_base64 = base64.b64encode(image_png).decode('utf-8')
+
+    # Include the chart in the context
+    context = {
+        'page_obj': page_obj,
+        'chart_base64': chart_base64,
+    }
+
+    # Generate the PDF
+    template = get_template('pages/report_template.html')
+    html = template.render(context)
+    response = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), response)
+
+    if not pdf.err:
+        return HttpResponse(response.getvalue(), content_type='application/pdf')
+    else:
+        return HttpResponse('We had some errors generating the report', status=500)
+
+
+
 
 # View function to login to the system
 def login_user(request):
@@ -153,7 +230,7 @@ def logout_user(request):
     # Clear the session data to log the user out
     request.session.flush()
     messages.success(request, "You have been logged out successfully.")
-    return redirect('login') # Redirect to the login page or any other page after logout
+    return redirect('login') 
 
 
 # Function to calculate a patient's score based on gender, age, urgency level, and waiting time
@@ -228,7 +305,7 @@ def dash(request):
 
     patients = models.Patient.objects.filter(query).order_by('-date')
 
-    paginator = Paginator(patients, 5)  
+    paginator = Paginator(patients, 6)  
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -506,3 +583,26 @@ def manage_stauts(request):
         models.Status.objects.create(name=stauts_name)
         messages.success(request, ' stauts added successfully.')
     return redirect('admin_dashbord')
+
+
+
+def create_score_visualization(patients):
+    # Extract data
+    names = [patient.name for patient in patients]
+    scores = [patient.score for patient in patients]
+
+    # Create bar chart
+    plt.figure(figsize=(10, 6))
+    plt.bar(names, scores, color='blue')
+    plt.xlabel('Patient Name')
+    plt.ylabel('Score')
+    plt.title('Patient Scores')
+    plt.xticks(rotation=45, ha='right')
+
+    # Save the plot to a BytesIO object
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    
+    # Optionally, you can return the buffer or save the image in the filesystem
+    return buffer
