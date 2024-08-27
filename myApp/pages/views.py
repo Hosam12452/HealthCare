@@ -38,6 +38,106 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 import numpy as np
 import base64
+from django.utils import timezone
+import csv
+
+
+def export_edit_logs(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="edit_logs.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Full Name', 'Edit Time', 'Edited Field', 'Old Value', 'New Value'])
+
+    for log in models.EditLog.objects.all():
+        writer.writerow([log.user.get_full_name(), log.edit_time, log.edited_field, log.old_value, log.new_value])
+
+    return response
+
+
+def export_user_logs(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="user_logs.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Full Name', 'Login Time'])
+
+    for log in models.UserLog.objects.all():
+        writer.writerow([log.user.get_full_name(), log.login_time])
+
+    return response
+
+
+def export_add_logs(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="add_logs.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Full Name', 'Add Time', 'Patient Name'])
+
+    for log in models.AddLog.objects.all():
+        writer.writerow([log.user.get_full_name(), log.add_time, log.patient_name])
+
+    return response
+
+
+def export_delete_logs(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="delete_logs.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Full Name', 'Delete Time', 'Patient Name'])
+
+    for log in models.DeleteLog.objects.all():
+        writer.writerow([log.user.get_full_name(), log.delete_time, log.patient_name])
+
+    return response
+
+
+def log_time(request):
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    user = request.GET.get('user')
+
+    edit_logs = models.EditLog.objects.all()
+    if start_date:
+        edit_logs = edit_logs.filter(edit_time__date__gte=start_date)
+    if end_date:
+        edit_logs = edit_logs.filter(edit_time__date__lte=end_date)
+    if user:
+        edit_logs = edit_logs.filter(user=user)
+
+    user_logs = models.UserLog.objects.all()
+    if start_date:
+        user_logs = user_logs.filter(login_time__date__gte=start_date)
+    if end_date:
+        user_logs = user_logs.filter(login_time__date__lte=end_date)
+    if user:
+        user_logs = user_logs.filter(user=user) 
+
+    add_logs = models.AddLog.objects.all()
+    if start_date:
+        add_logs = add_logs.filter(add_time__date__gte=start_date)
+    if end_date:
+        add_logs = add_logs.filter(add_time__date__lte=end_date)
+    if user:
+        add_logs = add_logs.filter(user=user) 
+
+    delete_logs = models.DeleteLog.objects.all()
+    if start_date:
+        delete_logs = delete_logs.filter(delete_time__date__gte=start_date)
+    if end_date:
+        delete_logs = delete_logs.filter(delete_time__date__lte=end_date)
+    if user:
+        delete_logs = delete_logs.filter(user=user) 
+
+    context = {
+        'edit_logs': edit_logs,
+        'user_logs': user_logs,
+        'add_logs': add_logs,
+        'delete_logs': delete_logs,
+    }
+    return render(request, 'pages/log_time.html', context)
 
 
 #View function to view the index page
@@ -203,8 +303,8 @@ def login_user(request):
         password = request.POST['password']
         
         try:
-            user = models.Users.objects.get(email=email)
-        except models.Users.DoesNotExist:
+            user = Users.objects.get(email=email)
+        except Users.DoesNotExist:
             user = None
         
         if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
@@ -212,10 +312,11 @@ def login_user(request):
                 error_message = "Your email address is not verified. Please check your email for the verification link."
                 return render(request, 'pages/login.html', {'error_message': error_message})
             
-            #
             request.session['user_id'] = user.id
             request.session['first_name'] = user.first_name
             request.session['last_name'] = user.last_name
+
+            models.UserLog.objects.create(user=user)
             
             return redirect('/pages/dash')
         else:
@@ -359,7 +460,13 @@ def addPat(request):
         )
         new_patient.save()
         print (score)
-    
+        user = Users.objects.get(id=request.session["user_id"])
+        models.AddLog.objects.create(
+
+            user=user,
+            add_time=timezone.now(),
+            patient_name=fullname
+        )
         
         messages.success(request, f'Patient {fullname} added successfully!')
         return redirect('addPat')  
@@ -439,6 +546,18 @@ def edit_patient(request, id):
     patient = models.Patient.objects.get(id=id)
     print(id)
     if request.method == 'POST':
+
+        old_values = {
+            'full_name': patient.full_name,
+            'email': patient.email,
+            'address': patient.address,
+            'phone': patient.phone,
+            'urgency_level': patient.urgency_level,
+            'age': patient.age,
+            'gender': patient.gender,
+            'action': patient.action
+        }
+
         patient.full_name = request.POST['full_name']
         patient.email = request.POST['email']
         patient.address = request.POST['address']
@@ -451,8 +570,18 @@ def edit_patient(request, id):
         
         waiting_time_days = int(request.POST['waiting_time_days'])
         patient.score = calculate_score(patient.gender, patient.age, patient.urgency_level, waiting_time_days)
-        
+        user = Users.objects.get(id=request.session["user_id"])
         patient.save()
+        for field, old_value in old_values.items():
+            new_value = getattr(patient, field)
+            if old_value != new_value:
+                models.EditLog.objects.create(
+                    user=user,  # Assuming the user is logged in
+                    edit_time=timezone.now(),
+                    edited_field=field,
+                    old_value=str(old_value),
+                    new_value=str(new_value)
+                )
         messages.success(request, f'Patient {patient.full_name} updated successfully!')
         return redirect('../../dash')
     
@@ -477,6 +606,12 @@ def delete_patient(request, id):
     patient = models.Patient.objects.get(id=id)
     
     if request.method == 'POST':
+        user = Users.objects.get(id=request.session["user_id"])
+        models.DeleteLog.objects.create(
+            user=user,  # Assuming the user is logged in
+            delete_time=timezone.now(),
+            patient_name=patient.full_name
+        )
         patient.delete()
         messages.success(request, f'Patient {patient.full_name} deleted successfully!')
         return redirect('/pages/dash')

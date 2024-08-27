@@ -1,9 +1,14 @@
 
 # Importing necessary Django modules and utilities
+from django.conf import settings
 from django.db import models
 import re
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import BaseUserManager
+from django.utils import timezone
+
+
+
 
 
 
@@ -32,6 +37,7 @@ class UserManager(BaseUserManager):
         return self.get(email=username)
 
 
+
 class Users(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -55,20 +61,55 @@ class Users(models.Model):
     def get_short_name(self):
         return self.first_name
 
-
-    # Method to set the user's password (hashing it)
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
         self.save()
 
-    # Method to check the password during authentication
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
     
     def get_email_field_name(self):
         return 'email'
+    
     objects = UserManager()
 
+
+class UserLog(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    login_time = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f'{self.user.get_full_name()} logged in at {self.login_time}'
+
+
+class EditLog(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    edit_time = models.DateTimeField(default=timezone.now)
+    edited_field = models.CharField(max_length=255)  
+    old_value = models.TextField()  
+    new_value = models.TextField()  
+
+    def __str__(self):
+        return f'{self.user.get_full_name()} edited at {self.edit_time}'
+
+
+class AddLog(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    add_time = models.DateTimeField(default=timezone.now)
+    patient_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'{self.user.get_full_name()} added at {self.add_time}'
+
+
+class DeleteLog(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    delete_time = models.DateTimeField(default=timezone.now)
+    patient_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'{self.user.get_full_name()} deleted at {self.delete_time}'
+    
 
 # Define the Patient model with various fields, including choice fields for gender and urgency level
 class Patient(models.Model):

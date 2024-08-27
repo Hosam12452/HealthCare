@@ -20,6 +20,10 @@ urlpatterns=[
     path('manage-urgency-levels/', views.manage_urgency_levels, name='manage_urgency_levels'),
     path('manage_stauts/', views.manage_stauts, name='manage_stauts'),
     path('generate_report/', views.generate_report, name='generate_report'),
-
+    path('log_time/', views.log_time, name='log_time'),
+    path('export/edit-logs/', views.export_edit_logs, name='export_edit_logs'),
+    path('export/user-logs/', views.export_user_logs, name='export_user_logs'),
+    path('export/add-logs/', views.export_add_logs, name='export_add_logs'),
+    path('export/delete-logs/', views.export_delete_logs, name='export_delete_logs'),
 
 ]
