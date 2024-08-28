@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'adminapp',
+    'rest_framework',
     'pages.apps.PagesConfig',
     'django.contrib.admin',
     'django.contrib.auth',

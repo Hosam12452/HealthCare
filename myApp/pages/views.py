@@ -40,6 +40,17 @@ import numpy as np
 import base64
 from django.utils import timezone
 import csv
+from rest_framework import generics
+from .models import Patient
+from .serializer import PatientSerializer
+
+class PatientListAPIView(generics.ListAPIView):
+    queryset = models.Patient.objects.all()
+    serializer_class = PatientSerializer
+
+class PatientDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
 
 
 def export_edit_logs(request):
@@ -380,7 +391,8 @@ def dash(request):
     score_from = request.GET.get('score_from')
     score_to = request.GET.get('score_to')
     gender = request.GET.getlist('gender')  
-    print(search_query, age_from, age_to,score_from, score_to, gender)
+
+    sort_by = request.GET.get('sort', '-date') 
 
 
     # Build the query object for filtering patients
@@ -397,20 +409,18 @@ def dash(request):
     if score_to:
         query &= Q(score__lte=score_to)
         
+    sort_by = request.GET.get('sort', '-date') 
 
     # Filter patients based on search and other criteria
-    if search_query:
-        patients = models.Patient.objects.filter(Q(full_name__icontains=search_query)).order_by('-date')
-    else:
-        patients = models.Patient.objects.all().order_by('-date')
+    patients = models.Patient.objects.filter(query).order_by(sort_by)
 
-    patients = models.Patient.objects.filter(query).order_by('-date')
 
     paginator = Paginator(patients, 6)  
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     context = {
+        "username" : request.session["first_name"],
         'page_obj': page_obj,
         'search_query': search_query,
         'age_from': age_from,
@@ -422,8 +432,35 @@ def dash(request):
     
     return render(request, 'pages/dash.html', context)
 
-# View function to add a new patient
 
+def export_patients(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="patients.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['Full Name', 'Email', 'Address', 'Phone', 'Age', 'Gender', 'Urgency Level', 'Score', 'Action', 'Status', 'Note', 'Date Added'])
+    for patient in Patient.objects.all():
+        writer.writerow([
+            patient.full_name,
+            patient.email,
+            patient.address,
+            patient.phone,
+            patient.age,
+            patient.gender,
+            patient.urgency_level,
+            patient.score,
+            patient.action,
+            patient.status,
+            patient.note,
+            patient.date 
+        ])
+
+    return response
+
+def test_api(request):
+    return render(request,'pages/Api_test.html')
+
+# View function to add a new patient
 def addPat(request):
     if 'user_id' not in request.session:
         messages.error(request, "Please log in before accessing this site !.")
