@@ -30,7 +30,6 @@ HealthCare is a project for Doctors to care for and report the status of the pat
 
 ## Features:
 * Customizable patient scorecards
-* Mobile accessibility
 * Audit trails
   
 ![image](https://github.com/user-attachments/assets/e69bb92f-d84b-428f-8cd2-2710f94a02ca)
