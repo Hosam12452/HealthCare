@@ -198,3 +198,14 @@ class ScoreSettings(models.Model):
     waiting_time_11_to_30_days_score = models.IntegerField(default=5)
     waiting_time_31_to_60_days_score = models.IntegerField(default=8)
     waiting_time_above_60_days_score = models.IntegerField(default=10)
+
+from django.db import models
+from django.utils import timezone
+
+class Report(models.Model):
+    name = models.CharField(max_length=255)
+    content = models.TextField(default='No content available')  # Default value
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name

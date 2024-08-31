@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            color: #444;
+            margin-top: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #fff;
+            margin: 15px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 80%;
+        }
+
+        ul li h3 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #007BFF;
+        }
+
+        ul li div {
+            margin-top: 10px;
+            font-size: 1em;
+            line-height: 1.6;
+            color: #666;
+        }
+
+        ul li a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #ff4c4c;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        ul li a:hover {
+            background-color: #e60000;
+        }
+    </style>
+</head>
+<body>
+    <h2>Generated Reports</h2>
+    <ul>
+        {% for report in reports %}
+            <li>
+                <h3>{{ report.name }}</h3>
+                <div>
+                    {{ report.content|safe }}
+                </div>
+                <a href="{% url 'delete_report' report.id %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
