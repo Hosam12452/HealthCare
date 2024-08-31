@@ -2,7 +2,7 @@
 
 
 ## what is the healthCare
-HealthCare is a project for patients in the hospital to care for and report the status of the patient 
+HealthCare is a project for hospital to care for and report the status of the patient 
 
 ![image](https://github.com/user-attachments/assets/8f6c9234-f3ae-4530-b73f-56dbf879de9a)
 
@@ -24,7 +24,6 @@ HealthCare is a project for patients in the hospital to care for and report the 
 ![image](https://github.com/user-attachments/assets/6b73efb7-9178-40f4-af01-34f70d86047b)
 
 * Integration with Existing Systems
-* Security and Compliance
 * Reporting and Analytics
   
 ![image](https://github.com/user-attachments/assets/69b361f3-75db-49a1-84c1-65702d40124f)
