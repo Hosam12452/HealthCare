@@ -66,6 +66,15 @@ This flexibility helps reduce effort and ensures efficient data management.
   The report can be deleted and a new report can be created if other patients are added.
 ![image](https://github.com/user-attachments/assets/69b361f3-75db-49a1-84c1-65702d40124f)
 
+* Generate Reports
+
+When you generate a report, you’ll receive comprehensive patient data along with detailed graphical representations. These visualizations help you understand various percentages and statistics at a glance, making it easier to analyze and interpret the information.
+
+This version highlights the inclusion of visual data to make reports more insightful.
+
+![reports](https://github.com/user-attachments/assets/2aa11a60-41dc-4225-b1b5-0923f4d4ce63)
+
+
 ## Features:
 * Customizable patient scorecards
   Where the main user (admin) can add, modify and delete patients, cases or diagnoses, and where he can give and modify the gain of points, where in short he is able to deal with the entire system and do what he wants
