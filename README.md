@@ -46,6 +46,6 @@ HealthCare is a project for Doctors to care for and report the status of the pat
 
 
 ## Contributors:
-Mahmoud Duhaidi : mahmoudduhaidi1@gmail.com
-Bakr Awad : bakr@
-Hasam Assaf : hasam@
+* Mahmoud Duhaidi : mahmoudduhaidi1@gmail.com
+* Bakr Awad : bakr@
+* Hasam Assaf : hasam@
