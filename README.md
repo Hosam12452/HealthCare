@@ -25,6 +25,16 @@ HealthCare is a project for Doctors to care for and report the status of the pat
 * A web-based application designed to prioritize patients awaiting elective surgeries based on predefined criteria.
 * Aims to improve efficiency and fairness in patient scheduling.
 
+* Dashboard Overview
+
+After registering, you'll be directed to the main dashboard, where you can manage all patient-related information.
+
+Patient List: View all patients along with their diagnoses at a glance.
+Add New Patient: Easily add new patient details by clicking the "Add Patient" button.
+Generate Reports: Quickly generate comprehensive reports for patients using the "Generate Report" button.
+Export to Excel: Need a spreadsheet? Export all patient data to Excel with just one click using the "Export" button.
+This dashboard is designed to help you efficiently manage patient information with ease.
+
 ![image](https://github.com/user-attachments/assets/5998f6be-8d3f-4e65-ad35-f46cd4c9ea31)
 
 
