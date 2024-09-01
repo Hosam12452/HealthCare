@@ -79,10 +79,13 @@ This version highlights the inclusion of visual data to make reports more insigh
 ## Features:
 * Customizable patient scorecards
   Where the main user (admin) can add, modify and delete patients, cases or diagnoses, and where he can give and modify the gain of points, where in short he is able to deal with the entire system and do what he wants
+
+![image](https://github.com/user-attachments/assets/e69bb92f-d84b-428f-8cd2-2710f94a02ca)
+
 * Audit trails
   All modifications, additions and deletions of patients are also seen so that no patient information is lost and all new and old information is stored.
   
-![image](https://github.com/user-attachments/assets/e69bb92f-d84b-428f-8cd2-2710f94a02ca)
+![log](https://github.com/user-attachments/assets/764b2da1-3281-4d09-b792-ce00bb72d0a0)
 
 
 ## Contributors:
