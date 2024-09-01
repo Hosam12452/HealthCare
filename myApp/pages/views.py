@@ -305,54 +305,45 @@ def generate_report(request):
     paginator = Paginator(patients, 6)  # Same page size as the dashboard
     page_obj = paginator.get_page(page_number)
 
-    # Total patients for percentage calculation
-    total_patients = patients.count()
+    # Create a distribution chart based on the name and score of the patients
+    names = [patient.full_name for patient in page_obj]
+    scores = [patient.score for patient in page_obj]
 
-    # Gender distribution
-    gender_data = Patient.objects.filter(query).values('gender').annotate(count=Count('gender'))
-    gender_percentages = calculate_percentage(gender_data, total_patients)
+    plt.figure(figsize=(8, 5))
+    plt.barh(names, scores, color='skyblue')
+    plt.xlabel('Score')
+    plt.ylabel('Patient Name')
+    plt.title('Patient Score Distribution')
 
-    # Urgency level distribution
-    urgency_data = Patient.objects.filter(query).values('urgency_level').annotate(count=Count('urgency_level'))
-    urgency_percentages = calculate_percentage(urgency_data, total_patients)
+    # Save the plot to a BytesIO object
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()
+    buffer.seek(0)
 
-    # Status distribution
-    status_data = Patient.objects.filter(query).values('status').annotate(count=Count('status'))
-    status_percentages = calculate_percentage(status_data, total_patients)
+    # Encode the image to base64 to embed in the HTML template
+    image_png = buffer.getvalue()
+    chart_base64 = base64.b64encode(image_png).decode('utf-8')
 
-    # make pie charts
-    gender_chart = plot_pie_chart(gender_percentages, 'Gender Distribution')
-    urgency_chart = plot_pie_chart(urgency_percentages, 'Urgency Level Distribution')
-    status_chart = plot_pie_chart(status_percentages, 'Status Distribution')
-
+    # Include the chart in the context
     context = {
         'page_obj': page_obj,
-        'gender_chart': gender_chart,
-        'urgency_chart': urgency_chart,
-        'status_chart': status_chart,
+        'chart_base64': chart_base64,
     }
 
-    report_html = render_to_string('pages/report_template.html', context)
+    # Generate the PDF
+    template = get_template('pages/report_template.html')
+    html = template.render(context)
+    response = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), response)
 
-    # Save the report as an html string in the database
-    report = Report(name=f"Report {timezone.now().strftime('%Y-%m-%d %H:%M:%S')}", content=report_html)
-    report.save()
+    if not pdf.err:
+        return HttpResponse(response.getvalue(), content_type='application/pdf')
+    else:
+        return HttpResponse('We had some errors generating the report', status=500)
 
-    return redirect('reports')
 
- 
 
-def delete_report(request, report_id):
-    report = get_object_or_404(Report, id=report_id)
-    if request.method == 'POST':
-        report.delete()
-        return redirect('reports')
-    return render(request, 'pages/delete_report.html', {'report': report})
-
-def reports(request):
-    reports = Report.objects.all()
-    context = {'reports': reports}
-    return render(request, 'pages/reports.html', context)
 
 # View function to login to the system
 def login_user(request):

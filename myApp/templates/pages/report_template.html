@@ -21,11 +21,7 @@
             width: 19%; 
         }
         td.date-column {
-            width: 10%;
-        }
-        .chart-container {
-            text-align: center; 
-            margin: 20px 0; 
+            width: 10%; /* Adjust this percentage as needed */
         }
     </style>
 </head>
@@ -72,5 +68,7 @@
             {% endfor %}
         </tbody>
     </table>
+    <h2>Patient Score Distribution</h2>
+    <img src="data:image/png;base64,{{ chart_base64 }}" alt="Patient Score Distribution">
 </body>
 </html>
