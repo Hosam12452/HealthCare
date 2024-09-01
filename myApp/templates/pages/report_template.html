@@ -17,17 +17,32 @@
         th {
             background-color: #f2f2f2;
         }
-        /* Adjust the width of the email column */
         td.email-column {
-            width: 19%; /* Adjust this percentage as needed */
+            width: 19%; 
         }
         td.date-column {
-            width: 10%; /* Adjust this percentage as needed */
+            width: 10%;
+        }
+        .chart-container {
+            text-align: center; 
+            margin: 20px 0; 
         }
     </style>
 </head>
 <body>
     <h2>Patient Report</h2>
+    
+    <div class="chart-container">
+        <h3>Gender Distribution</h3>
+        <img src="data:image/png;base64,{{ gender_chart }}" alt="Gender Distribution Chart" />
+        
+        <h3>Urgency Level Distribution</h3>
+        <img src="data:image/png;base64,{{ urgency_chart }}" alt="Urgency Level Distribution Chart" />
+        
+        <h3>Status Distribution</h3>
+        <img src="data:image/png;base64,{{ status_chart }}" alt="Status Distribution Chart" />
+    </div>
+
     <table>
         <thead>
             <tr>
@@ -41,22 +56,21 @@
                 <th>Score</th>
             </tr>
         </thead>
+
         <tbody>
             {% for patient in page_obj %}
             <tr>
                 <td class="date-column">{{ patient.date }}</td>
-                <td class="email-column" >{{ patient.full_name }} - {{ patient.address }}</td>
+                <td class="email-column">{{ patient.full_name }} - {{ patient.address }}</td>
                 <td class="email-column">{{ patient.email }}</td>
-                <td >{{ patient.get_gender_display }}</td>
+                <td>{{ patient.get_gender_display }}</td>
                 <td>{{ patient.age }}</td>
                 <td class="date-column">{{ patient.get_urgency_level_display }}</td>
-                <td class="email-column" >{{ patient.phone }}</td>
+                <td class="email-column">{{ patient.phone }}</td>
                 <td>{{ patient.score }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <h2>Patient Score Distribution</h2>
-    <img src="data:image/png;base64,{{ chart_base64 }}" alt="Patient Score Distribution">
 </body>
 </html>

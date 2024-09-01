@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.shortcuts import HttpResponse
 from django.contrib import messages
 from . import models
@@ -28,7 +28,9 @@ from django.contrib.auth import logout
 import pandas as pd
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from .models import Users
+from .models import Report, Users
+from django.db.models import Q, Count
+
 import bcrypt as bcrypt
 from django.template.loader import get_template
 from xhtml2pdf import pisa
@@ -43,6 +45,9 @@ import csv
 from rest_framework import generics
 from .models import Patient
 from .serializer import PatientSerializer
+import matplotlib.pyplot as plt
+import io
+import base64
 
 class PatientListAPIView(generics.ListAPIView):
     queryset = models.Patient.objects.all()
@@ -151,6 +156,11 @@ def log_time(request):
     return render(request, 'pages/log_time.html', context)
 
 
+
+def contact_us(request):
+    return render(request,'pages/contact_us.html')
+
+
 #View function to view the index page
 def index(request):
     return render(request,"pages/index.html")
@@ -233,6 +243,38 @@ def register(request):
     return render(request, 'pages/register.html')
 
 
+def calculate_percentage(data, total_count):
+    if total_count == 0:
+        return [{'name': item.get('gender', item.get('urgency_level', item.get('status', ''))), 'count': 0, 'percentage': 0} for item in data]
+
+    return [{'name': item.get('gender', item.get('urgency_level', item.get('status', ''))),
+             'count': item['count'],
+             'percentage': item['count'] * 100 / total_count} for item in data]
+
+
+
+def plot_pie_chart(data, title):
+    labels = [item['name'] for item in data if item['count'] > 0]
+    sizes = [item['percentage'] for item in data if item['count'] > 0]
+
+    if not labels:  
+        return None
+
+    plt.figure(figsize=(6, 6))
+    plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
+    plt.title(title)
+    plt.axis('equal')
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plt.close()
+    buf.seek(0)
+
+    # encode it to Base64
+    img_str = base64.b64encode(buf.getvalue()).decode('utf-8')
+    return img_str
+
+
 def generate_report(request):
     page_number = request.GET.get('page', 1)
     search_query = request.GET.get('search', '')
@@ -257,51 +299,60 @@ def generate_report(request):
         query &= Q(score__lte=score_to)
 
     # Filter patients based on the query
-    patients = models.Patient.objects.filter(query).order_by('-score')
+    patients = Patient.objects.filter(query).order_by('-score')
 
     # Paginate the patients
     paginator = Paginator(patients, 6)  # Same page size as the dashboard
     page_obj = paginator.get_page(page_number)
 
-    # Create a distribution chart based on the name and score of the patients
-    names = [patient.full_name for patient in page_obj]
-    scores = [patient.score for patient in page_obj]
+    # Total patients for percentage calculation
+    total_patients = patients.count()
 
-    plt.figure(figsize=(8, 5))
-    plt.barh(names, scores, color='skyblue')
-    plt.xlabel('Score')
-    plt.ylabel('Patient Name')
-    plt.title('Patient Score Distribution')
+    # Gender distribution
+    gender_data = Patient.objects.filter(query).values('gender').annotate(count=Count('gender'))
+    gender_percentages = calculate_percentage(gender_data, total_patients)
 
-    # Save the plot to a BytesIO object
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png')
-    plt.close()
-    buffer.seek(0)
+    # Urgency level distribution
+    urgency_data = Patient.objects.filter(query).values('urgency_level').annotate(count=Count('urgency_level'))
+    urgency_percentages = calculate_percentage(urgency_data, total_patients)
 
-    # Encode the image to base64 to embed in the HTML template
-    image_png = buffer.getvalue()
-    chart_base64 = base64.b64encode(image_png).decode('utf-8')
+    # Status distribution
+    status_data = Patient.objects.filter(query).values('status').annotate(count=Count('status'))
+    status_percentages = calculate_percentage(status_data, total_patients)
 
-    # Include the chart in the context
+    # make pie charts
+    gender_chart = plot_pie_chart(gender_percentages, 'Gender Distribution')
+    urgency_chart = plot_pie_chart(urgency_percentages, 'Urgency Level Distribution')
+    status_chart = plot_pie_chart(status_percentages, 'Status Distribution')
+
     context = {
         'page_obj': page_obj,
-        'chart_base64': chart_base64,
+        'gender_chart': gender_chart,
+        'urgency_chart': urgency_chart,
+        'status_chart': status_chart,
     }
 
-    # Generate the PDF
-    template = get_template('pages/report_template.html')
-    html = template.render(context)
-    response = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), response)
+    report_html = render_to_string('pages/report_template.html', context)
 
-    if not pdf.err:
-        return HttpResponse(response.getvalue(), content_type='application/pdf')
-    else:
-        return HttpResponse('We had some errors generating the report', status=500)
+    # Save the report as an html string in the database
+    report = Report(name=f"Report {timezone.now().strftime('%Y-%m-%d %H:%M:%S')}", content=report_html)
+    report.save()
 
+    return redirect('reports')
 
+ 
 
+def delete_report(request, report_id):
+    report = get_object_or_404(Report, id=report_id)
+    if request.method == 'POST':
+        report.delete()
+        return redirect('reports')
+    return render(request, 'pages/delete_report.html', {'report': report})
+
+def reports(request):
+    reports = Report.objects.all()
+    context = {'reports': reports}
+    return render(request, 'pages/reports.html', context)
 
 # View function to login to the system
 def login_user(request):
@@ -522,9 +573,6 @@ def addPat(request):
     return render(request, 'pages/addPat.html', context)
 
 
-
-
-
 # View function to import patients from an uploaded Excel file
 def import_patients(request):
     
@@ -698,83 +746,4 @@ def activate(request, uidb64, token):
     return render(request, 'activation_done.html')
 
 
-def admin_dashbord(request):
-    if request.method == 'POST':
-        if 'password' in request.POST:
-            # Check the password
-            password = request.POST.get('password')
-            if password == 'admin123':
-                # Password is correct, mark user as authenticated
-                request.session['authenticated'] = True
-                return render(request, 'pages/admin_dashbord.html', {
-                    'authenticated': True
-                })
-            else:
-                messages.error(request, 'Invalid password.')
-    else:
-        # If GET request, reset authentication
-        request.session['authenticated'] = False
 
-    return render(request, 'pages/admin_dashbord.html', {
-        'authenticated': request.session.get('authenticated', False)
-    })
-
-
-
-def manage_genders(request):
-    if request.method == 'POST':
-        gender_name = request.POST.get('gender_name')
-        if gender_name:
-            models.Gender.objects.create(name=gender_name)
-            messages.success(request, 'Gender added successfully.')
-        else:
-            messages.error(request, 'Gender name cannot be empty.')
-    return redirect('admin_dashbord')
-
-
-
-def manage_actions(request):
-    action_name = request.POST.get('action_name')
-    if action_name:
-        models.Action.objects.create(name=action_name)
-        messages.success(request, 'Action added successfully.')
-    return redirect('admin_dashbord')
-
-
-
-def manage_urgency_levels(request):
-    urgency_name = request.POST.get('urgency_name')
-    if urgency_name:
-        models.UrgencyLevel.objects.create(name=urgency_name)
-        messages.success(request, 'Urgency level added successfully.')
-    return redirect('admin_dashbord')
-
-def manage_stauts(request):
-    stauts_name = request.POST.get('stauts_name')
-    if stauts_name:
-        models.Status.objects.create(name=stauts_name)
-        messages.success(request, ' stauts added successfully.')
-    return redirect('admin_dashbord')
-
-
-
-def create_score_visualization(patients):
-    # Extract data
-    names = [patient.name for patient in patients]
-    scores = [patient.score for patient in patients]
-
-    # Create bar chart
-    plt.figure(figsize=(10, 6))
-    plt.bar(names, scores, color='blue')
-    plt.xlabel('Patient Name')
-    plt.ylabel('Score')
-    plt.title('Patient Scores')
-    plt.xticks(rotation=45, ha='right')
-
-    # Save the plot to a BytesIO object
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    
-    # Optionally, you can return the buffer or save the image in the filesystem
-    return buffer
