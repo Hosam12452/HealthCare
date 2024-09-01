@@ -8,12 +8,12 @@ HealthCare is a project for Doctors to care for and report the status of the pat
 
 ![image](https://github.com/user-attachments/assets/8f6c9234-f3ae-4530-b73f-56dbf879de9a)
 
-# Get started by either registering for a new account or logging in if you already have one. Whether you're new here or returning, we've made it easy to access all the features you need.
+### Get started by either registering for a new account or logging in if you already have one. Whether you're new here or returning, we've made it easy to access all the features you need.
 
-# New to our platform? Simply fill out the registration form to create your account.
+### New to our platform? Simply fill out the registration form to create your account.
  ![registter](https://github.com/user-attachments/assets/da472656-f023-4775-9200-848409226c08)
 
-# Already have an account? Log in with your email and password to continue.
+### Already have an account? Log in with your email and password to continue.
 ![login1](https://github.com/user-attachments/assets/5b41e1bf-3263-40ab-b943-43d35bbf82e8)
 
 We prioritize your security and convenience, ensuring a smooth experience every time you access our services.
