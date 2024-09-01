@@ -43,3 +43,9 @@ HealthCare is a project for Doctors to care for and report the status of the pat
   All modifications, additions and deletions of patients are also seen so that no patient information is lost and all new and old information is stored.
   
 ![image](https://github.com/user-attachments/assets/e69bb92f-d84b-428f-8cd2-2710f94a02ca)
+
+
+## Contributors:
+Mahmoud Duhaidi : mahmoudduhaidi1@gmail.com
+Bakr Awad : bakr@
+Hasam Assaf : hasam@
