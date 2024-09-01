@@ -49,3 +49,11 @@ HealthCare is a project for Doctors to care for and report the status of the pat
 * Mahmoud Duhaidi : mahmoudduhaidi1@gmail.com
 * Bakr Awad : bakr@
 * Hasam Assaf : hasam@
+
+## Ttechnologies that we used.
+* Python Django
+* JavaScript
+* HTML & CSS
+* RestAPI
+* AWS
+* Bootstarp 
