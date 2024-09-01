@@ -43,6 +43,12 @@ This dashboard is designed to help you efficiently manage patient information wi
   The doctor adds a new patient with all his characteristics and risks
   The system calculates points and classifies his risks
   It can also add patient quickly without wasting time through Excel .
+
+When you access the "Add Patient" feature, you have two convenient options:
+
+Manual Entry: Fill out the patient record form to add a single patient.
+Bulk Upload: Save time by uploading an Excel file containing multiple patients. This feature streamlines the process, allowing you to quickly add patient data in bulk.
+This flexibility helps reduce effort and ensures efficient data management.
   
 ![image](https://github.com/user-attachments/assets/b3ea1d9f-9ec3-40ad-8a61-0b747c225dac)
 * Scoring and Prioritization
