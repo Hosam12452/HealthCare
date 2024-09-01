@@ -47,8 +47,8 @@ HealthCare is a project for Doctors to care for and report the status of the pat
 
 ## Contributors:
 * Mahmoud Duhaidi : mahmoudduhaidi1@gmail.com
-* Bakr Awad : bakr@
-* Hasam Assaf : hasam@
+* Bakr Awad : bakrawad888@gmail.com
+* Hasam Assaf : hosam.assaf22@gmail.com
 
 ## Ttechnologies that we used.
 * Python Django
