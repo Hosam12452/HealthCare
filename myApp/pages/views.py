@@ -343,6 +343,84 @@ def generate_report(request):
         return HttpResponse('We had some errors generating the report', status=500)
 
 
+def generate_report(request):
+    page_number = request.GET.get('page', 1)
+    search_query = request.GET.get('search', '')
+    age_from = request.GET.get('age_from')
+    age_to = request.GET.get('age_to')
+    score_from = request.GET.get('score_from')
+    score_to = request.GET.get('score_to')
+    gender = request.GET.getlist('gender')
+
+    # Build the query object for filtering patients
+    query = Q(full_name__icontains=search_query)
+
+    if age_from:
+        query &= Q(age__gte=age_from)
+    if age_to:
+        query &= Q(age__lte=age_to)
+    if gender:
+        query &= Q(gender__in=gender)
+    if score_from:
+        query &= Q(score__gte=score_from)
+    if score_to:
+        query &= Q(score__lte=score_to)
+
+    # Filter patients based on the query
+    patients = Patient.objects.filter(query).order_by('-score')
+
+    # Paginate the patients
+    paginator = Paginator(patients, 6)  # Same page size as the dashboard
+    page_obj = paginator.get_page(page_number)
+
+    # Total patients for percentage calculation
+    total_patients = patients.count()
+
+    # Gender distribution
+    gender_data = Patient.objects.filter(query).values('gender').annotate(count=Count('gender'))
+    gender_percentages = calculate_percentage(gender_data, total_patients)
+
+    # Urgency level distribution
+    urgency_data = Patient.objects.filter(query).values('urgency_level').annotate(count=Count('urgency_level'))
+    urgency_percentages = calculate_percentage(urgency_data, total_patients)
+
+    # Status distribution
+    status_data = Patient.objects.filter(query).values('status').annotate(count=Count('status'))
+    status_percentages = calculate_percentage(status_data, total_patients)
+
+    # make pie charts
+    gender_chart = plot_pie_chart(gender_percentages, 'Gender Distribution')
+    urgency_chart = plot_pie_chart(urgency_percentages, 'Urgency Level Distribution')
+    status_chart = plot_pie_chart(status_percentages, 'Status Distribution')
+
+    context = {
+        'page_obj': page_obj,
+        'gender_chart': gender_chart,
+        'urgency_chart': urgency_chart,
+        'status_chart': status_chart,
+    }
+
+    report_html = render_to_string('pages/report_template.html', context)
+
+    # Save the report as an html string in the database
+    report = Report(name=f"Report {timezone.now().strftime('%Y-%m-%d %H:%M:%S')}", content=report_html)
+    report.save()
+
+    return redirect('reports') 
+
+
+
+def reports(request):
+    reports = Report.objects.all()
+    context = {'reports': reports}
+    return render(request, 'pages/reports.html', context)
+
+def delete_report(request, report_id):
+    report = get_object_or_404(Report, id=report_id)
+    if request.method == 'POST':
+        report.delete()
+        return redirect('reports')
+    return render(request, 'pages/delete_report.html', {'report': report})
 
 
 # View function to login to the system
