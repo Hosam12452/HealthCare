@@ -1,18 +1,16 @@
-{% extends 'base.html' %}
-
-{% block content %}
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Patient</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        /* CSS styles */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f8f9fa;
@@ -48,6 +46,9 @@
         .btn-import {
             background-color: #dc3545;
             color: #ffffff;
+            cursor: pointer;
+            border: none;
+            width: 100%;
         }
 
         .btn-import:hover {
@@ -59,10 +60,259 @@
             font-size: 1rem;
             color: #555;
         }
+
+        .file-input-container {
+            display: none;
+            font-weight: bold;
+            padding: 0.5em;
+            border: thin solid rgb(186, 35, 35);
+            border-radius: 3px;
+        }
+
+        .file-input-container input[type="file"] {
+            display: block;
+            margin-top: 10px;
+            color: rgb(32, 35, 38);
+            font-weight: bold;
+            padding: 0.5em;
+            border-radius: 3px;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #2d6a4f;
+            color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            background-color: #1b4332;
+            text-decoration: none;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content {
+            flex-grow: 1;
+        }
+
+        .dropdown-menu {
+            width: 300px;
+        }
+
+        .dropdown-menu .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .dropdown {
+            margin-left: 10px;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        .pagination-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .icon-action {
+            cursor: pointer;
+            margin-right: 5px;
+            transition: transform 0.3s, background-color 0.3s;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .icon-action:hover {
+            transform: scale(1.2);
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .search-filter-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            flex-grow: 1;
+        }
+        .dropdown-menu {
+            width: 300px;
+        }
+
+        .dropdown-menu .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .dropdown {
+            margin-left: 10px;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        .pagination-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .icon-action {
+            cursor: pointer;
+            margin-right: 5px;
+            transition: transform 0.3s, background-color 0.3s;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .icon-action:hover {
+            transform: scale(1.2);
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .search-filter-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            flex-grow: 1;
+        }
+
+        body {
+            background: linear-gradient(90deg, rgb(127, 120, 120) 0%, rgb(153, 186, 136) 50%);
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            width: 100%;
+            background: linear-gradient(90deg, rgb(127, 120, 120) 0%, rgb(153, 186, 136) 50%);
+            padding: 10px 0;
+            color: #ffffff;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            margin: 0 auto;
+        }
+        .navbar {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .logo {
+            height: 50px;
+        }
+        .web_name {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: #e5e7eb;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: auto;
+        }
+        .user_pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .navbar a {
+            text-decoration: none;
+            font-size: 1rem;
+            color: #a9d4b2;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+        .navbar a:hover {
+            background-color: #56a67c;
+            color: white;
+            border-radius: 5px;
+        }
+        .logout {
+            font-weight: bold;
+            color: #dc3545;
+        }
+     
+        hr {
+        border: 0;
+        height: 2px; 
+        background-color: green; 
+        margin: 20px auto;
+    }
     </style>
+        <header>
+            {% load static %}
+            <nav>
+                <ul>
+                    <li><a href="../dash" class="btn btn-success">Dashboard</a></li>
+                    <li><a href="contact">Contact Us</a></li>
+                    <li><a href="../about" class="active">About Us</a></li>
+                    <div class="user-info">
+                    <li><a href="{% url 'logout' %}" class="btn btn-danger">Logout</a></li>
+                    <img src="{% static 'photo/logo.jpeg' %}" alt="User Picture" class="user_pic">
+                    
+                </div>
+                </ul>
+            </nav>
+        </header>
 </head>
-<br>
+
 <body>
+    <br>
     <br>
     <br>
     <br>
@@ -77,28 +327,34 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <form action="addPat" method="POST">
+            <form action="{% url 'addPat' %}" method="POST">
                 {% csrf_token %}
+                <!-- Identity -->
                 <div class="form-group">
-                    <label for="id">ID</label>
-                    <input type="text" class="form-control" name="id" id="id" placeholder="Enter ID" required>
+                    <label for="ID">ID</label>
+                    <input type="text" class="form-control" name="id" id="ID" placeholder="ID" required>
                 </div>
+                <!-- Name -->
                 <div class="form-group">
                     <label for="fullname">Full Name</label>
                     <input type="text" class="form-control" name="full_name" id="fullname" placeholder="Enter full name" required>
                 </div>
+                <!-- Email -->
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" class="form-control" name="email" id="email" placeholder="Enter email" required>
                 </div>
+                <!-- Address -->
                 <div class="form-group">
                     <label for="address">Address</label>
                     <input type="text" class="form-control" name="address" id="address" placeholder="Enter address" required>
                 </div>
+                <!-- Phone Number -->
                 <div class="form-group">
                     <label for="phone">Phone Number</label>
                     <input type="tel" class="form-control" name="phone" id="phone" placeholder="Enter phone number" required>
                 </div>
+                <!-- Urgency Level -->
                 <div class="form-group">
                     <label for="urgency_level">Urgency Level</label>
                     <select class="form-control" name="urgency_level" id="urgency_level" required>
@@ -106,54 +362,105 @@
                         <option value="High">High</option>
                         <option value="Medium">Medium</option>
                         <option value="Low">Low</option>
+                        {% for urgency_level in urgency_levels %}
+                        <option value="{{ urgency_level.name }}">{{ urgency_level.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
+                <!-- Action -->
                 <div class="form-group">
                     <label for="action">Action</label>
-                    <select class="form-control" name="action" id="action" required>
-                        <option value="UPDATE MEDICAL RECORDS">UPDATE MEDICAL RECORDS</option>
-                        <option value="ORDER DIAGNOSTIC TESTS">ORDER DIAGNOSTIC TESTS</option>
-                        <option value="REFER TO SPECIALIST">REFER TO SPECIALIST</option>
-                        <option value="DISCHARGE PATIENT">DISCHARGE PATIENT</option>
-                        <option value="PROVIDE HEALTH EDUCATION">PROVIDE HEALTH EDUCATION</option>
-                    </select>
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <select class="form-control" name="action" id="action" required>
+                                <option value="UPDATE MEDICAL RECORDS">UPDATE MEDICAL RECORDS</option>
+                                <option value="ORDER DIAGNOSTIC TESTS">ORDER DIAGNOSTIC TESTS</option>
+                                <option value="REFER TO SPECIALIST">REFER TO SPECIALIST</option>
+                                <option value="DISCHARGE PATIENT">DISCHARGE PATIENT</option>
+                                <option value="PROVIDE HEALTH EDUCATION">PROVIDE HEALTH EDUCATION</option>
+                                {% for action in actions %}
+                                <option value="{{ action.name }}">{{ action.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="note" id="note" placeholder="Add note">
+                        </div>
+                    </div>
                 </div>
+                <!-- Age and Gender -->
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="age">Age</label>
-                        <input type="number" class="form-control" name="age" id="age" placeholder="Enter age" required>
+                        <input type="number" class="form-control" name="age" id="age" placeholder="Enter age" required min="0" max="200">
                     </div>
                     <div class="form-group col-md-6">
                         <label for="gender">Gender</label>
                         <select class="form-control" name="gender" id="gender" required>
-                            <option value="">Gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
+                            {% for gender in genders %}
+                            <option value="{{ gender.name }}">{{ gender.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
+                <!-- Status -->
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select class="form-control" name="status" id="status" required>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Completed">Completed</option>
+                        {% for status in statuses %}
+                            <option value="{{ status.name }}">{{ status.name }}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+                <!-- Adding data to the database -->
                 <input type="hidden" name="waiting_time_days" value="0">
-
                 <div class="d-flex justify-content-center align-items-center">
                     <button type="submit" class="btn btn-add">Add</button>
                     <span class="or-text">OR</span>
-                    <button type="button" class="btn btn-import">Import</button>
                 </div>
             </form>
+            <br>
+            <br>
+            <!-- Import group of patients -->
+            <div class="d-flex justify-content-center align-items-center">
+                <button type="button" class="btn btn-import" id="importButton">Import Excel File</button>
+            </div>
+            <div class="file-input-container">
+                <form action="{% url 'import_patients' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="file" class="form-control-file" name="patient_file" id="patient_file" accept=".xlsx" required>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-import">Submit File</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('importButton').addEventListener('click', function () {
+            document.querySelector('.file-input-container').style.display = 'block';
+            this.style.display = 'none'; 
+        });
+    </script>
 </body>
 <br>
 <br>
 <br>
 <br>
 <br>
-
-
+<br>
 
 </html>
-{% endblock content %}
+

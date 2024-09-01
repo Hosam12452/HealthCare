@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'adminapp',
+    'rest_framework',
     'pages.apps.PagesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -119,7 +121,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'gic\static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'pages\static')]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'image')
 MEDIA_URL = '/image/'
@@ -133,8 +135,14 @@ EMAIL_HOST_USER = 'bakr0592260950@gmail.com'  # Replace with your Gmail address
 EMAIL_HOST_PASSWORD = 'atwe jcxl klgr znvi'  # Replace with your Gmail app-specific password
 DEFAULT_FROM_EMAIL = 'bakr0592260950@gmail.com'
 
+SESSION_COOKIE_SECURE = False
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_URL = 'login'
+
+AUTH_USER_MODEL = 'auth.user'

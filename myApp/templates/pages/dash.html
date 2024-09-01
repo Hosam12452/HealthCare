@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,8 +5,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Data Table</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+       body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background-color: #2d6a4f;
+            color: #fff;
+            padding: 15px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a.active {
+            background-color: #1b4332;
+            text-decoration: none;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content {
+            flex-grow: 1;
+        }
+
         .dropdown-menu {
             width: 300px;
         }
@@ -54,122 +108,308 @@
         .search-input {
             flex-grow: 1;
         }
+        .dropdown-menu {
+            width: 300px;
+        }
+
+        .dropdown-menu .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .dropdown {
+            margin-left: 10px;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        .pagination-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .icon-action {
+            cursor: pointer;
+            margin-right: 5px;
+            transition: transform 0.3s, background-color 0.3s;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .icon-action:hover {
+            transform: scale(1.2);
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .search-filter-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            flex-grow: 1;
+        }
+
+        body {
+            background: linear-gradient(90deg, rgb(127, 120, 120) 0%, rgb(153, 186, 136) 50%);
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            width: 100%;
+            background: linear-gradient(90deg, rgb(127, 120, 120) 0%, rgb(153, 186, 136) 50%);
+            padding: 10px 0;
+            color: #ffffff;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            margin: 0 auto;
+        }
+        .navbar {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .logo {
+            height: 50px;
+        }
+        .web_name {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: #e5e7eb;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: auto;
+        }
+        .user_pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .navbar a {
+            text-decoration: none;
+            font-size: 1rem;
+            color: #a9d4b2;
+            padding: 5px 10px;
+            transition: background-color 0.3s ease;
+        }
+        .navbar a:hover {
+            background-color: #56a67c;
+            color: white;
+            border-radius: 5px;
+        }
+        .logout {
+            font-weight: bold;
+            color: #dc3545;
+        }
+     
+        hr {
+        border: 0;
+        height: 2px; 
+        background-color: green; 
+        margin: 20px auto;
+    }
     </style>
 </head>
+    <header>
+        {% load static %}
+        <nav>
+            <ul>
+                <li><a href="../addPat" class="btn btn-success">Add Patient</a></li>
+                <li><a href="../reports" class="btn btn-success">Report Patients</a></li>
+                <li><a href="../contact_us">Contact Us</a></li>
+                <li><a href="../about" class="active">About Us</a></li>
+                <div class="user-info">
+                <li><a href="{% url 'logout' %}" class="btn btn-danger">Logout</a></li>
+                <img src="{% static 'photo/logo.jpeg' %}" alt="User Picture" class="user_pic">
+                <h5>Welcome, {{ username }}</h5>
+            </div>
+            </ul>
+        </nav>
+    </header>
 
-<body class="container">
     <div class="row">
         <div class="col-12 table-container">
             <h2>Dashboard</h2>
-            <div class="search-filter-container mb-3">
-                <input type="text" class="form-control search-input" placeholder="Search patient data...">
-                <div class="dropdown">
-                    <button class="btn btn-success dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Filter
-                    </button>
-                    <div class="dropdown-menu p-4" aria-labelledby="filterDropdown">
-                        <form>
-                            <div class="form-group">
-                                <label for="ageRange">Age:</label>
-                                <div class="d-flex">
-                                    <input type="number" class="form-control mr-2" placeholder="From">
-                                    <input type="number" class="form-control" placeholder="To">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>Gender:</label>
-                                <div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="female">
-                                        <label class="form-check-label" for="female">Female</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="male">
-                                        <label class="form-check-label" for="male">Male</label>
+            <form action="" method="GET">
+                <div class="search-filter-container mb-3">
+                    <input type="text" class="form-control search-input" name="search" placeholder="Search patient by name..." value="{{ search_query }}">
+                    <div class="dropdown">
+                        <button class="btn btn-success dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Filter
+                        </button>
+                        <div class="dropdown-menu p-4" aria-labelledby="filterDropdown">
+                            <form method="GET" action="dash">
+                                <div class="form-group">
+                                    <label for="ageRange">Age:</label>
+                                    <div class="d-flex">
+                                        <input type="number" class="form-control mr-2" name="age_from" placeholder="From" value="{{ age_from }}">
+                                        <input type="number" class="form-control" name="age_to" placeholder="To" value="{{ age_to }}">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="scoreRange">Score:</label>
-                                <div class="d-flex">
-                                    <input type="number" class="form-control mr-2" placeholder="From">
-                                    <input type="number" class="form-control" placeholder="To">
+                                <div class="form-group">
+                                    <label>Gender:</label>
+                                    <div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gender" value="Female" {% if 'Female' in gender %}checked{% endif %}>
+                                            <label class="form-check-label">Female</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="gender" value="Male" {% if 'Male' in gender %}checked{% endif %}>
+                                            <label class="form-check-label">Male</label>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Confirm</button>
-                        </form>
+                                <div class="form-group">
+                                    <label for="scoreRange">Score:</label>
+                                    <div class="d-flex">
+                                        <input type="number" class="form-control mr-2" name="score_from" placeholder="From" value="{{ score_from }}">
+                                        <input type="number" class="form-control" name="score_to" placeholder="To" value="{{ score_to }}">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Confirm</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <table class="table table-bordered table-striped">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Date/Time</th>
-                        <th>Name</th>
-                        <th>Address/Email</th>
-                        <th>Gender</th>
-                        <th>Age</th>
-                        <th>Urgency Level</th>
-                        <th>Phone</th>
-                        <th>Action</th>
-                        <th>Score</th>
-                        <th>Ico</th> 
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>2024-07-01 10:00</td>
-                        <td>John Doe-123 Elm St</td>
-                        <td>Springfield<br>john.doe@example.com</td>
-                        <td>Male</td>
-                        <td>45</td>
-                        <td>High</td>
-                        <td>(123) 456-7890</td>
-                        <td>Follow-up</td>
-                        <td>50</td>
-                        <td>
-                            <span class="icon-action text-danger">&#128465;</span> 
-                            <span class="icon-action text-primary">&#9998;</span> 
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2024-07-02 14:00</td>
-                        <td>Jane Smith-456 Oak St</td>
-                        <td>Springfield<br>jane.smith@example.com</td>
-                        <td>Female</td>
-                        <td>38</td>
-                        <td>Medium</td>
-                        <td>(234) 567-8910</td>
-                        <td>Schedule Visit</td>
-                        <td>70</td>
-                        <td>
-                            <span class="icon-action text-danger">&#128465;</span> 
-                            <span class="icon-action text-primary">&#9998;</span> 
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Date/Time</th>
+                            <th><a href="?search={{ search_query }}&sort=full_name{% if sort_by == 'full_name' and sort_order == 'asc' %}&order=desc{% elif sort_by == 'full_name' %}&order=asc{% endif %}{% if age_from %}&age_from={{ age_from }}{% endif %}{% if age_to %}&age_to={{ age_to }}{% endif %}{% if gender %}&gender={{ gender|join:',' }}{% endif %}{% if score_from %}&score_from={{ score_from }}{% endif %}{% if score_to %}&score_to={{ score_to }}{% endif %}">Name</a></th>
+                            <th>Address/Email</th>
+                            <th>Gender</th>
+                            <th><a href="?search={{ search_query }}&sort=age{% if sort_by == 'age' and sort_order == 'asc' %}&order=desc{% elif sort_by == 'age' %}&order=asc{% endif %}{% if age_from %}&age_from={{ age_from }}{% endif %}{% if age_to %}&age_to={{ age_to }}{% endif %}{% if gender %}&gender={{ gender|join:',' }}{% endif %}{% if score_from %}&score_from={{ score_from }}{% endif %}{% if score_to %}&score_to={{ score_to }}{% endif %}">Age</a></th>
+                            <th>Urgency Level</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+                            <th><a href="?search={{ search_query }}&sort=score{% if sort_by == 'score' and sort_order == 'asc' %}&order=desc{% elif sort_by == 'score' %}&order=asc{% endif %}{% if age_from %}&age_from={{ age_from }}{% endif %}{% if age_to %}&age_to={{ age_to }}{% endif %}{% if gender %}&gender={{ gender|join:',' }}{% endif %}{% if score_from %}&score_from={{ score_from }}{% endif %}{% if score_to %}&score_to={{ score_to }}{% endif %}">Score</a></th>
+                            <th>Edit/Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if page_obj %}
+                            {% for patient in page_obj %}
+                            <tr>
+                                <td>{{ patient.date }}</td>
+                                <td>{{ patient.full_name }} - {{ patient.address }}</td>
+                                <td>{{ patient.email }}</td>
+                                <td>{{ patient.get_gender_display }}</td>
+                                <td>{{ patient.age }}</td>
+                                <td>{{ patient.get_urgency_level_display }}</td>
+                                <td>{{ patient.phone }}</td>
+                                <td>{{ patient.get_action_display }}</td>
+                                <td>{{ patient.score }}</td>
+                                <td>
+                                    <a href="{% url 'edit_patient' patient.id %}">
+                                        <span class="icon-action text-primary">&#9998;</span>
+                                    </a>
+                                    <a href="#" class="delete-icon" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ patient.id }}" data-name="{{ patient.full_name }}">
+                                        <span class="icon-action text-danger">&#128465;</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="10" class="text-center">No patients found.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
 
-            <div class="pagination-container">
-                <nav>
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item"><a class="page-link" href="#">&#171;</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">&#187;</a></li>
-                    </ul>
-                </nav>
-            </div>
+                <div class="pagination-container">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1" class="btn btn-outline-primary btn-sm">First</a>
+                        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary btn-sm">Previous</a>
+                    {% endif %}
 
-            <div class="text-center mt-4">
-                <button class="btn btn-success">Add Patient</button>
-            </div>
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <span class="btn btn-primary btn-sm">{{ num }}</span>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <a href="?page={{ num }}" class="btn btn-outline-primary btn-sm">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary btn-sm">Next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-outline-primary btn-sm">Last</a>
+                    {% endif %}
+                </div>
+                <div class="text-end mb-3">
+                    <a href="{% url 'generate_report' %}?page={{ page_obj.number }}" class="btn btn-secondary">
+                        Generate Report
+                    </a>
+                    <a href="{% url 'export_patients' %}" class="btn btn-warning">
+                        Export Patients
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <span id="deletePatientName"></span>?
+                </div>
+                <div class="modal-footer">
+                    <form method="POST" action="{% url 'delete_patient' 0 %}" id="deleteForm">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="bg-light text-center text-lg-start mt-auto fixed-bottom">
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2024 Medical Center: <a class="text-dark" href="#">Bakr, Hosam, and Mahmoud</a>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var patientId = button.getAttribute('data-id');
+            var patientName = button.getAttribute('data-name');
+            var deleteForm = document.getElementById('deleteForm');
+            var deletePatientName = document.getElementById('deletePatientName');
+
+            deleteForm.action = deleteForm.action.replace('0', patientId);
+            deletePatientName.textContent = patientName;
+        });
+    </script>
 </body>
 
 </html>

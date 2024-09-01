@@ -6,19 +6,19 @@
     <title>About Us - Medical Center Management</title>
     <style>
         body {
-
             font-family: Arial, sans-serif;
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #56a67c;
+            background-color: #f4f4f4;
             color: #333;
         }
 
         header {
-            background-color: #56a67c;
+            background-color: #2d6a4f;
             color: #fff;
-            padding: 10px 0;
+            padding: 15px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         nav ul {
@@ -30,57 +30,86 @@
         }
 
         nav ul li {
-            margin: 0 15px;
+            margin: 0 20px;
         }
 
         nav ul li a {
             color: #fff;
             text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
 
+        nav ul li a:hover,
         nav ul li a.active {
-            text-decoration: underline;
+            background-color: #1b4332;
+            text-decoration: none;
         }
 
         .about-section {
-            padding: 40px 20px;
+            padding: 60px 20px;
             background-color: #fff;
-            margin: 20px auto;
-            max-width: 800px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 30px auto;
+            max-width: 900px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .about-section h1 {
-            margin-bottom: 20px;
-            font-size: 2.5em;
+            margin-bottom: 30px;
+            font-size: 2.8em;
             text-align: center;
+            color: #2d6a4f;
         }
 
         .about-section p {
-            margin-bottom: 20px;
-            font-size: 1.1em;
+            margin-bottom: 25px;
+            font-size: 1.2em;
             line-height: 1.8;
             text-align: justify;
+            color: #555;
         }
 
         .about-section h2 {
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 2em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 2.2em;
             color: #007BFF;
+            text-align: center;
         }
 
         footer {
-            background-color: #333;
+            background-color: #2d6a4f;
             color: #fff;
             text-align: center;
-            padding: 10px 0;
-            margin-top: 40px;
+            padding: 15px 0;
+            margin-top: 50px;
         }
 
         footer p {
             margin: 0;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .about-section {
+                padding: 40px 15px;
+                margin: 20px;
+            }
+
+            .about-section h1 {
+                font-size: 2.2em;
+            }
+
+            .about-section p {
+                font-size: 1.1em;
+            }
+
+            .about-section h2 {
+                font-size: 1.8em;
+            }
         }
     </style>
 </head>
@@ -88,7 +117,10 @@
     <header>
         <nav>
             <ul>
-                <li><a href="index">Home</a></li>
+                <li><a href="../login">LogIn</a></li>
+                <li><a href="services">Services</a></li>
+                <li><a href="contact">Contact Us</a></li>
+                <li><a href="about" class="active">About Us</a></li>
             </ul>
         </nav>
     </header>
